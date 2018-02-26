@@ -51,6 +51,17 @@ BoundingBox.prototype.setBounds = function (centerPos, w, h) {
 };
 
 /**
+ * Set the BoundingBox Position.
+ * @memberOf BoundingBox
+ * @param {vec2} pos Center postion of the bounding box
+ * @returns {void}
+ */
+BoundingBox.prototype.setPosition = function (pos) {
+    this.mLL[0] = pos[0] - (this.mWidth / 2);
+    this.mLL[1] = pos[1] - (this.mHeight / 2);
+};
+
+/**
  * Determines if x,y point is inside BoundingBox
  * @memberOf BoundingBox
  * @param {type} x X location to check
