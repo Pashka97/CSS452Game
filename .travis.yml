@@ -3,5 +3,7 @@ node_js:
   - "0.11"
 install:
  - npm install jshint -g
+ - npm install html-validator-cli -g
 script:
  - jshint public_html/ || exit 0
+ - html-validator public_html/index.html --quiet || exit 0
