@@ -22,6 +22,7 @@ var gEngine = gEngine || { };
  */
 gEngine.Input = (function () {
     // Key code constants
+    // find with http://keycode.info/
     /**
      * @memberOf gEngine.Input
      * @type{enum} kKeys - Input keyCodes.
@@ -35,6 +36,7 @@ gEngine.Input = (function () {
 
         // space bar
         Space: 32,
+        Enter: 13,
 
         // numbers 
         Zero: 48,

@@ -5,7 +5,7 @@
 <!--Use embedded shader code for now, in order to remove async loading complexity.-->
 
 <body onload="
-        var myGame = new MyGame();
+        var myGame = new MainMenu();
         gEngine.Core.initializeEngineCore('GLCanvas', myGame);
             ">
     
@@ -23,6 +23,7 @@
         <script type="text/javascript" src="src/Engine/Core/Engine_Input.js"></script>
         <script type="text/javascript" src="src/Engine/Core/Engine_Particle.js"></script>
         <script type="text/javascript" src="src/Engine/Core/Engine_LayerManager.js"></script>
+    <script type="text/javascript" src="src/Engine/Core/Engine_Logger.js"></script>
         <!-- Resource support -->
         <script type="text/javascript" src="src/Engine/Core/Resources/Engine_ResourceMap.js"></script>
         <script type="text/javascript" src="src/Engine/Core/Resources/Engine_TextFileLoader.js"></script>
@@ -99,6 +100,7 @@
 
    
     <!-- Client game code -->
+        <script type="text/javascript" src="src/MyGame/MainMenu.js"></script>
         <script type="text/javascript" src="src/MyGame/Objects/Hobbes.js"></script>     
         <script type="text/javascript" src="src/MyGame/MyGame.js"></script>  
         <script type="text/javascript" src="src/MyGame/Objects/Platform.js"></script>

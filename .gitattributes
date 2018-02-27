@@ -1,0 +1,9 @@
+# Ensure that all check ins are using CRLF... sorry Linux users
+
+# default behavior
+* text eol=crlf
+
+*.js eol=crlf
+*.glsl text eol=crlf
+*.png binary
+*.jpg binary
