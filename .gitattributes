@@ -2,7 +2,7 @@
 
 # default behavior
 * text eol=crlf
-
+*.yml auto
 *.js eol=crlf
 *.glsl text eol=crlf
 *.png binary
