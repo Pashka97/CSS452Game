@@ -81,6 +81,13 @@ GameObjectSet.prototype.update = function () {
     }
 };
 
+GameObjectSet.prototype.update = function (mCam, mHero) {
+    var i;
+    for (i = 0; i < this.mSet.length; i++) {
+        this.mSet[i].update(mCam, mHero);
+    }
+}
+
 /**
  * Draw function called by GameLoop calls all GameObject's in GameObjectSet
  * @param {type} aCamera

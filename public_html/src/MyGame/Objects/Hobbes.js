@@ -4,6 +4,12 @@
 
 function Hobbes(spriteSheet, posX, posY) {
 
+    // Hit Points
+    this.mHP = 3;
+
+    this.damageTimer = null;
+    this.mInvincible = false;
+    
     this.mRen = new SpriteAnimateRenderable(spriteSheet);
     this.mRen.setColor([1, 1, 1, 0]);
     this.mRen.getXform().setPosition(posX, posY);
@@ -104,7 +110,15 @@ Hobbes.prototype._setSprite = function() {
     }
 };
 
-Hobbes.prototype.update = function(platformSet) {
+Hobbes.prototype.registerDamage = function () {
+    this.mHP--;
+    this.damageTimer = Date.now();
+    this.mInvincible = true;
+    this.mRen.setColor([1, 0, 0, .5]);
+}
+
+Hobbes.prototype.update = function(
+    platformSet, enemySet, squirtGunShots, squirtGunShotSprite) {
     // Check if hobbes is on ground by checking collisions with Platforms
     this._setOnGroundState(platformSet);
     
@@ -113,7 +127,7 @@ Hobbes.prototype.update = function(platformSet) {
     this.mPrevRightWalking = this.mRightWalking;
     var delta = 0.5;
     var xform = this.getXform();
-    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Left)) {
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.A)) {
         xform.incXPosBy(-delta);
         if (this.mOnGround) {
             this.mLeftWalking = true; 
@@ -124,7 +138,7 @@ Hobbes.prototype.update = function(platformSet) {
         this.mRightWalking = false;
         this.mFacing = this.eFacing.left;
     }
-    else if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Right)) {
+    else if (gEngine.Input.isKeyPressed(gEngine.Input.keys.D)) {
         xform.incXPosBy(delta);
         if (this.mOnGround) {
             this.mRightWalking = true;
@@ -140,7 +154,7 @@ Hobbes.prototype.update = function(platformSet) {
         this.mRightWalking = false;
     }
     // Up arrow key for jump
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Up) &&
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.W) &&
         this.mOnGround) {
         var velocity = this.mRigidBody.getVelocity();
         velocity[1] = 25;
@@ -152,7 +166,54 @@ Hobbes.prototype.update = function(platformSet) {
     
     // Bounding box
     this.mBoundBox.setPosition(xform.getPosition());
+    
+    // Check for turning invincibility time over
+    if(this.mInvincible) {
+        var currentTime = Date.now();
+        if(currentTime - this.damageTimer > 2000)   {
+            this.mInvincible = false;
+            this.mRen.setColor([1, 1, 1, 0]);
+        }
+    }
+    
+    for(var i = 0; i < enemySet.size(); i++) {
+        if (this.pixelTouches(enemySet.getObjectAt(i), [])) {
+            if (!this.mInvincible) {
+                this.registerDamage();
+            }
+            enemySet.getObjectAt(i).bounceBack();
+        }
+    }
+    
+    // Fire squirt gun shots
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space)) {
+        if (this.mFacing === this.eFacing.left) {
+            var xPos = this.getXform().getPosition()[0] - 5;
+            var yPos = this.getXform().getPosition()[1] +
+                       (this.getXform().getHeight() / 4);
+            var shot = new SquirtGunShot(
+                squirtGunShotSprite, xPos, yPos, true);
+            squirtGunShots.addToSet(shot);
+        }
+        else { // facing right
+            var xPos = this.getXform().getPosition()[0] + 5;
+            var yPos = this.getXform().getPosition()[1] +
+                       (this.getXform().getHeight() / 4);
+            var shot = new SquirtGunShot(
+                squirtGunShotSprite, xPos, yPos, false);
+            squirtGunShots.addToSet(shot);
+        }
+    }
+    
     // Update sprite
     this._setSprite();
     this.mRen.updateAnimation();
+    
+    // Return true if Hobbes is dead
+    if (this.mHP <= 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
 };

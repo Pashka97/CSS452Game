@@ -19,8 +19,6 @@ gEngine.Core.inheritPrototype(MainMenu, Scene);
 
 MainMenu.prototype.initialize = function()
 {
-    gEngine.Logger.logInfo("Start Main Menu");
-
     this.camera = new Camera(
         vec2.fromValues(50, 50),
         100,
@@ -41,6 +39,13 @@ MainMenu.prototype.initialize = function()
     this.camera.setBackgroundColor([80 / 255, 114 / 255, 201 / 255, 1.0]);
 };
 
+
+MainMenu.prototype.unloadScene = function() {
+    var mainGame = new MyGame();
+    gEngine.Core.startScene(mainGame);
+};
+
+
 MainMenu.prototype.goToMainGame = function()
 {
     var mainGame = new MyGame();
@@ -50,11 +55,15 @@ MainMenu.prototype.goToMainGame = function()
 MainMenu.prototype.update = function()
 {
     // check for the Enter or Space keys to start the game
-    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Space)
-    || gEngine.Input.isKeyPressed(gEngine.Input.keys.Enter))
+    if(gEngine.Input.isKeyClicked(gEngine.Input.keys.Space))
     {
-        gEngine.Logger.logInfo("Switching to the main game");
-        this.goToMainGame();
+        gEngine.GameLoop.stop();
+    }
+    
+    // Enter Doesnt Work?
+    if(gEngine.Input.isKeyClicked(gEngine.Input.keys.Enter))
+    {
+        gEngine.GameLoop.stop();
     }
 };
 
