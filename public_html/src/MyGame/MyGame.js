@@ -31,6 +31,7 @@ function MyGame() {
     this.mMinions = null;
     this.mSquirtGunShots = null;
     this.mHobbes = null;
+    this.mHobbesHealthBar = null;
     this.mFloor = null;
     // Next Scene to go to
     this.mNextScene = null;
@@ -65,9 +66,16 @@ MyGame.prototype.initialize = function () {
     this.mWorldBounds = new WorldBounds(centerPos, width, height);
     // Camera
     this.mCamera = new Camera(centerPos, width, [0, 0, 800, 600]);
-    this.mCamera.setBackgroundColor([0, 0, 0, 1]);
+    this.mCamera.setBackgroundColor([0, 0, 1, 1]);
     // Hobbes
-    this.mHobbes = new Hobbes(this.kHobbesSpriteSheet, 50, 35); 
+    this.mHobbes = new Hobbes(this.kHobbesSpriteSheet, 50, 35);
+    // Hobbes' health bar
+    this.mHobbesHealthBar = new HealthBar(
+        vec2.fromValues(-45, 20),
+        2,
+        20,
+        this.mHobbes
+    );
     // Floor
     var floorRen = new Renderable();
     floorRen.getXform().setPosition(50, 2.5);
@@ -113,11 +121,11 @@ MyGame.prototype.draw = function () {
     this.mObjects.draw(this.mCamera);
     this.mMinions.draw(this.mCamera);
     this.mSquirtGunShots.draw(this.mCamera);
+    // Health bar
+    this.mHobbesHealthBar.draw(this.mCamera);
 };
 
 MyGame.prototype.update = function () {
-    
-    
     this.mCamera.update();  // to ensure proper interpolated movement effects
 
     if (this.mHobbes.update(
@@ -152,6 +160,8 @@ MyGame.prototype.update = function () {
         this.mNextScene = new GameOver();
         gEngine.GameLoop.stop();
     }
+    
+    this.mHobbesHealthBar.update(this.mCamera);
 };
 
 

@@ -52,6 +52,10 @@ function Hobbes(spriteSheet, posX, posY) {
 }
 gEngine.Core.inheritPrototype(Hobbes, GameObject);
 
+Hobbes.prototype.getHealth = function () {
+    return this.mHP;
+};
+
 Hobbes.prototype._setOnGroundState = function(platformSet) {
     for (var i = 0; i < platformSet.size(); ++i) {
         var status = this.mBoundBox.boundCollideStatus(
@@ -115,7 +119,7 @@ Hobbes.prototype.registerDamage = function () {
     this.damageTimer = Date.now();
     this.mInvincible = true;
     this.mRen.setColor([1, 0, 0, .5]);
-}
+};
 
 Hobbes.prototype.update = function(
     platformSet, enemySet, squirtGunShots, squirtGunShotSprite) {
