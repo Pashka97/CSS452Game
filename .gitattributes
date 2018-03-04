@@ -1,4 +1,5 @@
 *.glsl  text
+.travis.yml text
 
 # https://raw.githubusercontent.com/alexkaratarakis/gitattributes/master/Web.gitattributes
 ## GITATTRIBUTES FOR WEB PROJECTS
