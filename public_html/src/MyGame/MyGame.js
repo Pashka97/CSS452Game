@@ -12,28 +12,26 @@
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
 function MyGame() {
-    // assets
+    // Assets
     this.kProjectileTexture = "assets/particle.png";
     this.kSphereMinion = "assets/sphere_enemy.png";
     this.kHobbesSpriteSheet = "assets/hobbes.png";
     this.kPlatformTexture = "assets/platform.png";
     this.kSquirtGunShotSprite = "assets/squirtgunshot.png";
-    this.kBackground = "assets/Background.png"
-    
-    // camera
+    this.kBackground = "assets/Background.png";
+    // World Bounds
+    this.mWorldBounds = null;
+    // Camera
     this.mCamera = null;
-    
-    // background
+    // Background
     this.mBG = null;
-    
-    // objects
+    // Objects
     this.mObjects = null;
     this.mPlatforms = null;
     this.mMinions = null;
     this.mSquirtGunShots = null;
     this.mHobbes = null;
     this.mFloor = null;
-    
     // Next Scene to go to
     this.mNextScene = null;
 }
@@ -60,20 +58,16 @@ MyGame.prototype.unloadScene = function() {
 };
 
 MyGame.prototype.initialize = function () {
-    // camera
-    this.mCamera = new Camera(
-        vec2.fromValues(50, 40), // position of the camera
-        100,                     // width of camera
-        [0, 0, 800, 600]         // viewport (orgX, orgY, width, height)
-    );
+    // World Bounds
+    var centerPos = vec2.fromValues(50, 40);
+    var width = 100;
+    var height = 75;
+    this.mWorldBounds = new WorldBounds(centerPos, width, height);
+    // Camera
+    this.mCamera = new Camera(centerPos, width, [0, 0, 800, 600]);
     this.mCamera.setBackgroundColor([0, 0, 0, 1]);
-    
-    
     // Hobbes
-    this.mHobbes = new Hobbes(this.kHobbesSpriteSheet, 50, 35);
-    
-    
-     
+    this.mHobbes = new Hobbes(this.kHobbesSpriteSheet, 50, 35); 
     // Floor
     var floorRen = new Renderable();
     floorRen.getXform().setPosition(50, 2.5);
@@ -82,25 +76,20 @@ MyGame.prototype.initialize = function () {
     var floorRB = new RigidRectangle(floorRen.getXform(), 100, 5);
     floorRB.setMass(0);
     this.mFloor.setRigidBody(floorRB);
-    
     // Platforms
     this.mPlatforms = new GameObjectSet();
     var pf = new Platform(this.kPlatformTexture, 20, 8, 30, 0);
     this.mPlatforms.addToSet(pf);
     this.mPlatforms.addToSet(this.mFloor);
-    
     // Object set
     this.mObjects = new GameObjectSet();
     this.mObjects.addToSet(this.mHobbes);
     this.mObjects.addToSet(this.mFloor);
     this.mObjects.addToSet(pf);
-    
     //Set to store enemies
     this.mMinions = new GameObjectSet();
-     
     // Squirt gun shot set
     this.mSquirtGunShots = new GameObjectSet();
-     
     //Initialize enemies
     var y = 70;
     var x = 10;
@@ -156,6 +145,11 @@ MyGame.prototype.update = function () {
     }
     if(this.mMinions.size() <= 0) {
         this.mNextScene = new WinScreen();
+        gEngine.GameLoop.stop();
+    }
+    // If Hobbes goes out of the world bounds, game over
+    if (this.mWorldBounds.outsideBounds(this.mHobbes)) {
+        this.mNextScene = new GameOver();
         gEngine.GameLoop.stop();
     }
 };
