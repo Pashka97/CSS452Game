@@ -22,7 +22,7 @@ function WaterBalloon(sprite, posX, posY, left) {
     this.mRen.getXform().setSize(width, height);
     this.mRen.setElementPixelPositions(0, 64, 0, 64);
     
-    GameObject.call(this, this.mRen);
+    Projectile.call(this, this.mRen);
     
     //Throw at a 45 degree angle in the direction you are currently facing
     if (left) {
@@ -59,9 +59,13 @@ function WaterBalloon(sprite, posX, posY, left) {
     this.physicsTimer = Date.now();
     
     this.toggleDrawRigidShape();
+
+    // flag that determines if this projectile is dead or not and if it should be removed
+    // or trigger splash damage
+    this.mIsDead = false;
 };
 
-gEngine.Core.inheritPrototype(WaterBalloon, GameObject);
+gEngine.Core.inheritPrototype(WaterBalloon, Projectile);
 
 //Used to determine direction to through. For now just throw at 45 degree angle
 //from hobbes object
@@ -124,4 +128,3 @@ WaterBalloon.prototype.update = function () {
 WaterBalloon.prototype.draw = function (aCamera) {
     this.mRen.draw(aCamera);
 };
-
