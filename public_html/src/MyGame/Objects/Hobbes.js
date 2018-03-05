@@ -6,7 +6,7 @@ function Hobbes(spriteSheet, posX, posY) {
 
     // Hit Points
     this.mHP = 3;
-
+    
     this.damageTimer = null;
     this.mInvincible = false;
     
@@ -24,10 +24,11 @@ function Hobbes(spriteSheet, posX, posY) {
 
     GameObject.call(this, this.mRen);
     
+    //Height of rigidBody is slightly smaller than Hobbes sprite to preventing
+    //Bouncing when falling
     var rigidBody = new RigidRectangle(this.getXform(), width / 2, height);
     this.setRigidBody(rigidBody);
-    //this.toggleDrawRenderable();
-    //this.toggleDrawRigidShape();
+    rigidBody.setRestitution(0);
     
     this.mBoundBox = new BoundingBox(
         vec2.fromValues(posX, posY),
@@ -38,6 +39,8 @@ function Hobbes(spriteSheet, posX, posY) {
     // Status flags
     // standing on a Platform (being "on the ground")
     this.mOnGround = false;
+    this.mJumpTime = null;
+    
     // Facing left or right
     this.eFacing = Object.freeze({
         left:0,
@@ -63,6 +66,8 @@ Hobbes.prototype._setOnGroundState = function(platformSet) {
                      );
         if (status & BoundingBox.eboundCollideStatus.eCollideBottom) {
             this.mOnGround = true;
+            var velocity = this.mRigidBody.getVelocity();
+            velocity[1] = 0;
             return;
         }
     }
@@ -161,8 +166,9 @@ Hobbes.prototype.update = function(
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.W) &&
         this.mOnGround) {
         var velocity = this.mRigidBody.getVelocity();
-        velocity[1] = 25;
+        velocity[1] = 45;
         this.mOnGround = false;
+        this.mJumpTime = Date.now();
     }
     
     this.mRigidBody.setAngularVelocity(0);
@@ -212,6 +218,12 @@ Hobbes.prototype.update = function(
     // Update sprite
     this._setSprite();
     this.mRen.updateAnimation();
+    
+    // If Hobbes is falling, increase speed at a smooth rate
+    // until you reach terminal velocity
+    if(this.mOnGround === false && this.mJumpTime !== null) {
+        xform.incYPosBy(((Date.now() - this.mJumpTime)/3000) * -1.3);
+    }
     
     // Return true if Hobbes is dead
     if (this.mHP <= 0) {
