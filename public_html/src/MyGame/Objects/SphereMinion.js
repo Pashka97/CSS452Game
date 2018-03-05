@@ -35,7 +35,7 @@ function SphereMinion(spriteTexture, atX, atY) {
     
 
    this.mMinion.setElementPixelPositions(0, 512, 0, 512);
-    HittableGameObject.call(this, this.mMinion);
+   HittableGameObject.call(this, this.mMinion);
     
     var r;
     r = new RigidCircle(this.getXform(), 0.35*Math.sqrt(w*w + h*h)); 
@@ -131,7 +131,7 @@ SphereMinion.prototype.hasExpired = function () { return this.mHealth <= 0;};
 
 SphereMinion.prototype.onHit = function(collided)
 {
-    HittableGameObject.onHit.call(this, collided);
+    HittableGameObject.prototype.onHit.call(this, collided);
 
-    gEngine.Logger.info('sphere minion hit');
+    console.log('sphere minion hit');
 };

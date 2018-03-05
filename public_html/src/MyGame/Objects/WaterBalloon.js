@@ -135,7 +135,7 @@ WaterBalloon.prototype.draw = function (aCamera) {
  */
 WaterBalloon.prototype.onHit = function(collided)
 {
-    HittableGameObject.onHit.call(this, collided);
+    HittableGameObject.prototype.onHit.call(this, collided);
 
-    gEngine.Logger.info('water balloon has collided with another object!');
+    console.log('water balloon has collided with another object!');
 };

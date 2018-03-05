@@ -50,4 +50,6 @@ HittableGameObject.prototype.onHit = function(collided)
 {
     // default to doing nothing, let each object that subclasses this type deal with the implementation
     this.mIsHit = true;
+
+    console.log('hittable on hit');
 };

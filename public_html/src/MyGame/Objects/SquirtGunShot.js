@@ -82,5 +82,5 @@ SquirtGunShot.prototype.onHit = function(collided)
 {
     HittableGameObject.prototype.onHit.call(this, collided);
 
-    gEngine.Logger.info('squirt gun shot hit');
+    console.log('squirt gun shot hit');
 };
