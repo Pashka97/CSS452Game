@@ -176,12 +176,22 @@ MyGame.prototype.update = function () {
     
     // Destroy Spheres if hit by a shot
     for (var i = 0; i < this.mSquirtGunShots.size(); ++i) {
+        var shot = this.mSquirtGunShots.getObjectAt(i);
         for (var j = 0; j < this.mMinions.size(); ++j) {
-            var shot = this.mSquirtGunShots.getObjectAt(i);
             var minion = this.mMinions.getObjectAt(j);
             if (shot.pixelTouches(minion, [])) {
                 this.mSquirtGunShots.removeFromSet(shot);
                 this.mMinions.removeFromSet(minion);
+            }
+        }
+        // or if they collide with the bounding boxes of the world
+        for(var j = 0; j < this.mLevel.mPlatforms.size(); j++)
+        {
+            var platform = this.mLevel.mPlatforms.getObjectAt(j);
+            // check for a hit and remove the squirt gun shot if it was hit
+            if(shot.pixelTouches(platform, []))
+            {
+                this.mSquirtGunShots.removeFromSet(shot);
             }
         }
     }
