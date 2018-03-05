@@ -128,3 +128,14 @@ WaterBalloon.prototype.update = function () {
 WaterBalloon.prototype.draw = function (aCamera) {
     this.mRen.draw(aCamera);
 };
+
+/**
+ * Called when the water balloon collides with another object
+ * @param collided
+ */
+WaterBalloon.prototype.onHit = function(collided)
+{
+    Projectile.onHit.call(this, collided);
+
+    gEngine.Logger.info('water balloon has collided with another object!');
+};

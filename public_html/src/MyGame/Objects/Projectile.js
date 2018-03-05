@@ -43,8 +43,9 @@ Projectile.prototype.isHit = function()
 
 /**
  * This function should be called when the projectile hits something
+ * @parm collided The object that this object has collided with
  */
-Projectile.prototype.onHit = function()
+Projectile.prototype.onHit = function(collided)
 {
     // default to doing nothing, let each object that subclasses this type deal with the implementation
     this.mIsHit = true;
