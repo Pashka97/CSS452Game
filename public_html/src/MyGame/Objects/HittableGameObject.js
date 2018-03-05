@@ -15,19 +15,19 @@
  * @param renderable {Renderable} The renderable object to pass on to the game object
  * @constructor
  */
-function Projectile(renderable)
+function HittableGameObject(renderable)
 {
     this.mIsDead = false;
     this.mIsHit = false;
 };
 
-gEngine.Core.inheritPrototype(Projectile, GameObject);
+gEngine.Core.inheritPrototype(HittableGameObject, GameObject);
 
 /**
  * Is the object dead? If so, then this object should be removed from the set of objects.
  * @returns {boolean}
  */
-Projectile.prototype.isDead = function()
+HittableGameObject.prototype.isDead = function()
 {
     return this.mIsDead;
 };
@@ -36,7 +36,7 @@ Projectile.prototype.isDead = function()
  * Has the object been hit? If so, do something
  * @returns {boolean}
  */
-Projectile.prototype.isHit = function()
+HittableGameObject.prototype.isHit = function()
 {
     return this.mIsHit;
 };
@@ -45,7 +45,7 @@ Projectile.prototype.isHit = function()
  * This function should be called when the projectile hits something
  * @parm collided The object that this object has collided with
  */
-Projectile.prototype.onHit = function(collided)
+HittableGameObject.prototype.onHit = function(collided)
 {
     // default to doing nothing, let each object that subclasses this type deal with the implementation
     this.mIsHit = true;

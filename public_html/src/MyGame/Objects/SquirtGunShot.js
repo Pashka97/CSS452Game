@@ -22,12 +22,12 @@ function SquirtGunShot(sprite, posX, posY, left) {
     this.mParticles.update();
     
     
-    Projectile.call(this, this.mRen);
+    HittableGameObject.call(this, this.mRen);
     
     // Whether the shot is traveling left or right
     this.mLeft = left;
 }
-gEngine.Core.inheritPrototype(SquirtGunShot, Projectile);
+gEngine.Core.inheritPrototype(SquirtGunShot, HittableGameObject);
 
 SquirtGunShot.prototype.update = function() {
     var delta = 1.5;
@@ -80,7 +80,7 @@ SquirtGunShot.prototype.draw = function(aCamera) {
  */
 SquirtGunShot.prototype.onHit = function(collided)
 {
-    Projectile.prototype.onHit.call(this, collided);
+    HittableGameObject.prototype.onHit.call(this, collided);
 
     gEngine.Logger.info('squirt gun shot hit');
 };

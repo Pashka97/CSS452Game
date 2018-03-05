@@ -22,7 +22,7 @@ function WaterBalloon(sprite, posX, posY, left) {
     this.mRen.getXform().setSize(width, height);
     this.mRen.setElementPixelPositions(0, 64, 0, 64);
     
-    Projectile.call(this, this.mRen);
+    HittableGameObject.call(this, this.mRen);
     
     //Throw at a 45 degree angle in the direction you are currently facing
     if (left) {
@@ -65,7 +65,7 @@ function WaterBalloon(sprite, posX, posY, left) {
     this.mIsDead = false;
 };
 
-gEngine.Core.inheritPrototype(WaterBalloon, Projectile);
+gEngine.Core.inheritPrototype(WaterBalloon, HittableGameObject);
 
 //Used to determine direction to through. For now just throw at 45 degree angle
 //from hobbes object
@@ -135,7 +135,7 @@ WaterBalloon.prototype.draw = function (aCamera) {
  */
 WaterBalloon.prototype.onHit = function(collided)
 {
-    Projectile.onHit.call(this, collided);
+    HittableGameObject.onHit.call(this, collided);
 
     gEngine.Logger.info('water balloon has collided with another object!');
 };
