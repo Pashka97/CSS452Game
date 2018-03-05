@@ -95,6 +95,9 @@ GameObjectSet.prototype.update = function () {
     }
 };
 
+
+
+
 /**
  * Overloaded update used by minions. mHero's xform is used
  * for chasing hero.
@@ -102,12 +105,18 @@ GameObjectSet.prototype.update = function () {
  * @param {type} mHero
  * @returns {undefined}
  */
-GameObjectSet.prototype.update = function (mCam, mHero) {
+GameObjectSet.prototype.update = function (mCam, mHero, minionSheet) {
     var i;
     for (i = 0; i < this.mSet.length; i++) {
-        this.mSet[i].update(mCam, mHero);
+        if(this.mSet[i] instanceof FloaterBoss) {
+            this.mSet[i].update(this.mSet, minionSheet, mHero);
+        }
+        else {
+            this.mSet[i].update(mCam, mHero);
+        }
+        
     }
-}
+};
 
 /**
  * Draw function called by GameLoop calls all GameObject's in GameObjectSet

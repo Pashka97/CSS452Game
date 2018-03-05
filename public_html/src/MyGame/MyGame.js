@@ -18,6 +18,7 @@ function MyGame() {
     this.kHobbesSpriteSheet = "assets/hobbes.png";
     this.kPlatformTexture = "assets/platform.png";
     this.kSquirtGunShotSprite = "assets/squirtgunshot.png";
+    this.kFloaterBossSprite = "assets/spacebot-violet.png";
     this.kWaterBalloonSprite = "assets/Balloon.png";
     this.kBackground = "assets/background_circuits.png";
     this.kBackgroundNormal = "assets/background_circuits_normal.png";
@@ -46,6 +47,7 @@ function MyGame() {
     this.mSquirtGunShots = null;
     this.mHobbes = null;
     this.mHobbesHealthBar = null;
+    this.mBoss = null;
 
     // Next Scene to go to
     this.mNextScene = null;
@@ -60,6 +62,7 @@ MyGame.prototype.loadScene = function() {
     gEngine.Textures.loadTexture(this.kSquirtGunShotSprite);
     gEngine.Textures.loadTexture(this.kWaterBalloonSprite);
     gEngine.Textures.loadTexture(this.kBackground);
+    gEngine.Textures.loadTexture(this.kFloaterBossSprite);
     gEngine.Textures.loadTexture(this.kBackgroundNormal);
     gEngine.Textures.loadTexture(this.kTile128);
     gEngine.Textures.loadTexture(this.kTile256);
@@ -74,6 +77,7 @@ MyGame.prototype.unloadScene = function() {
     gEngine.Textures.unloadTexture(this.kSquirtGunShotSprite);
     gEngine.Textures.unloadTexture(this.kWaterBalloonSprite);
     gEngine.Textures.unloadTexture(this.kBackground);
+    gEngine.Textures.unloadTexture(this.kFloaterBossSprite);  
     gEngine.Textures.unloadTexture(this.kBackgroundNormal);
     gEngine.Textures.unloadTexture(this.kTile128);
     gEngine.Textures.unloadTexture(this.kTile256);
@@ -122,10 +126,13 @@ MyGame.prototype.initialize = function ()
     this.mObjects.appendSet(this.mLevel.mPlatforms);
 
     this.mObjects.addToSet(this.mHobbes);
+
     //Set to store enemies
     this.mMinions = new GameObjectSet();
+    
     // Squirt gun shot set
     this.mSquirtGunShots = new GameObjectSet();
+    
     //Initialize enemies
     var y = 70;
     var x = 10;
@@ -135,6 +142,9 @@ MyGame.prototype.initialize = function ()
        this.mMinions.addToSet(m); 
     }
     
+    //Initialize boss
+    this.mBoss = new FloaterBoss(this.kFloaterBossSprite, 30, 30);
+    this.mMinions.addToSet(this.mBoss);
     gEngine.DefaultResources.setGlobalAmbientIntensity(3);
 };
 
@@ -169,7 +179,11 @@ MyGame.prototype.update = function () {
 
     this.mLevel.mTrackedLight.set2DPosition(this.mHobbes.getXform().getPosition());
     
-    this.mMinions.update(this.mCamera, this.mHobbes);
+    this.mMinions.update(this.mCamera,
+        this.mHobbes,
+        this.kSphereMinion);
+    
+    
     this.mSquirtGunShots.update(this.mCamera);
 
     gEngine.Physics.processCollision(this.mObjects, []);
