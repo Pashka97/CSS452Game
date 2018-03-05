@@ -203,12 +203,24 @@ MyGame.prototype.update = function () {
     // for all water balloons process their splash damage
 
 
+
     // remove all of the dead minions
 
-    // remove all of the dead water shots
-    for(var i = 0; this.mSquirtGunShots.size(); i++)
+    // remove all of the dead water shots and water balloons
+    // list of all of the objects that need to be removed
+    var toRemove = [ ];
+    for(var i = 0; i < this.mSquirtGunShots.size(); i++)
     {
-
+        var current = this.mSquirtGunShots.getObjectAt(i);
+        if(current.isDead())
+        {
+            toRemove.push(current);
+        }
+    }
+    // now actually remove the items
+    for(var i = 0; i < toRemove; i++)
+    {
+        this.mSquirtGunShots.removeFromSet(toRemove[i]);
     }
 
     
