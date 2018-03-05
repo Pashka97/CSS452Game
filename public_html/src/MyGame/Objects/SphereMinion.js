@@ -35,7 +35,7 @@ function SphereMinion(spriteTexture, atX, atY) {
     
 
    this.mMinion.setElementPixelPositions(0, 512, 0, 512);
-    GameObject.call(this, this.mMinion);
+    HittableGameObject.call(this, this.mMinion);
     
     var r;
     r = new RigidCircle(this.getXform(), 0.35*Math.sqrt(w*w + h*h)); 
@@ -53,7 +53,7 @@ function SphereMinion(spriteTexture, atX, atY) {
         h/2
     );
 }
-gEngine.Core.inheritPrototype(SphereMinion, GameObject);
+gEngine.Core.inheritPrototype(SphereMinion, HittableGameObject);
 
 SphereMinion.prototype.rotateObjPointTo = function (p, rate) {
     // Step A: determine if reach the destination position p
@@ -128,3 +128,10 @@ SphereMinion.prototype.update = function (camera, hobbes) {
 SphereMinion.prototype.registerDamage = function () { this.mHealth--;};
 
 SphereMinion.prototype.hasExpired = function () { return this.mHealth <= 0;};
+
+SphereMinion.prototype.onHit = function(collided)
+{
+    HittableGameObject.onHit.call(this, collided);
+
+    gEngine.Logger.info('sphere minion hit');
+};
