@@ -39,7 +39,6 @@ SquirtGunShot.prototype.update = function() {
     this.mParticles.update();
 };
 
-
 SquirtGunShot.prototype.createParticle = function(atX, atY) {
     var life = 50;
     var p = new ParticleGameObject("assets/particle.png", atX, atY, life);

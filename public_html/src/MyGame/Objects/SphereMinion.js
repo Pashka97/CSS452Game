@@ -13,7 +13,6 @@
 
 var kMinionWidth = 6;
 var kMinionHeight = 4.8;
-var kMinionRandomSize = 5;
 
 function SphereMinion(spriteTexture, atX, atY) {
         

@@ -52,6 +52,10 @@ function Hobbes(spriteSheet, posX, posY) {
     this.mPrevRightWalking = false;
     this.mLeftWalking = false;
     this.mRightWalking = false;
+    
+    //Water balloon and timer
+    this.mHasBalloon = true;
+    this.balloonTimer = null;
 }
 gEngine.Core.inheritPrototype(Hobbes, GameObject);
 
@@ -127,7 +131,8 @@ Hobbes.prototype.registerDamage = function () {
 };
 
 Hobbes.prototype.update = function(
-    platformSet, enemySet, squirtGunShots, squirtGunShotSprite) {
+    platformSet, enemySet, 
+    squirtGunShots, squirtGunShotSprite, waterBalloonSprite) {
     // Check if hobbes is on ground by checking collisions with Platforms
     this._setOnGroundState(platformSet);
     
@@ -212,6 +217,37 @@ Hobbes.prototype.update = function(
             var shot = new SquirtGunShot(
                 squirtGunShotSprite, xPos, yPos, false);
             squirtGunShots.addToSet(shot);
+        }
+    }
+    
+    // Throw water balloon
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.F))   {
+        if(this.mHasBalloon) {
+            if (this.mFacing === this.eFacing.left) {
+                var xPos = this.getXform().getPosition()[0] - 5;
+                var yPos = this.getXform().getPosition()[1] +
+                           (this.getXform().getHeight() / 4);
+                var shot = new WaterBalloon(
+                        waterBalloonSprite, xPos, yPos, true);
+                squirtGunShots.addToSet(shot);
+            }
+            else { //facing right
+                var xPos = this.getXform().getPosition()[0] + 5;
+                var yPos = this.getXform().getPosition()[1] +
+                           (this.getXform().getHeight() / 4);
+                var shot = new WaterBalloon(
+                        waterBalloonSprite, xPos, yPos, false);
+                squirtGunShots.addToSet(shot);
+            }
+            this.balloonTimer = Date.now();
+            this.mHasBalloon = false;
+        }
+    }
+    
+    // Check if Balloon is ready
+    if(!this.mHasBalloon) {
+        if(Date.now() - this.balloonTimer >= 3000) {
+            this.mHasBalloon = true;
         }
     }
     

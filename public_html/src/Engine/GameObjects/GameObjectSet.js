@@ -95,6 +95,13 @@ GameObjectSet.prototype.update = function () {
     }
 };
 
+/**
+ * Overloaded update used by minions. mHero's xform is used
+ * for chasing hero.
+ * @param {type} mCam
+ * @param {type} mHero
+ * @returns {undefined}
+ */
 GameObjectSet.prototype.update = function (mCam, mHero) {
     var i;
     for (i = 0; i < this.mSet.length; i++) {

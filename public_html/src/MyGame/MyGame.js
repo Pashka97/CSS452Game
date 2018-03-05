@@ -18,6 +18,7 @@ function MyGame() {
     this.kHobbesSpriteSheet = "assets/hobbes.png";
     this.kPlatformTexture = "assets/platform.png";
     this.kSquirtGunShotSprite = "assets/squirtgunshot.png";
+    this.kWaterBalloonSprite = "assets/Balloon.png";
     this.kBackground = "assets/background_circuits.png";
     this.kBackgroundNormal = "assets/background_circuits_normal.png";
 
@@ -57,6 +58,7 @@ MyGame.prototype.loadScene = function() {
     gEngine.Textures.loadTexture(this.kHobbesSpriteSheet);
     gEngine.Textures.loadTexture(this.kPlatformTexture);
     gEngine.Textures.loadTexture(this.kSquirtGunShotSprite);
+    gEngine.Textures.loadTexture(this.kWaterBalloonSprite);
     gEngine.Textures.loadTexture(this.kBackground);
     gEngine.Textures.loadTexture(this.kBackgroundNormal);
     gEngine.Textures.loadTexture(this.kTile128);
@@ -70,6 +72,7 @@ MyGame.prototype.unloadScene = function() {
     gEngine.Textures.unloadTexture(this.kHobbesSpriteSheet);
     gEngine.Textures.unloadTexture(this.kPlatformTexture);
     gEngine.Textures.unloadTexture(this.kSquirtGunShotSprite);
+    gEngine.Textures.unloadTexture(this.kWaterBalloonSprite);
     gEngine.Textures.unloadTexture(this.kBackground);
     gEngine.Textures.unloadTexture(this.kBackgroundNormal);
     gEngine.Textures.unloadTexture(this.kTile128);
@@ -129,7 +132,7 @@ MyGame.prototype.initialize = function ()
     for (var i = 1; i<=5; i++) {
         var m = new SphereMinion(this.kSphereMinion, x, y);
         x += 20;
-       this.mMinions.addToSet(m); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+       this.mMinions.addToSet(m); 
     }
     
     gEngine.DefaultResources.setGlobalAmbientIntensity(3);
@@ -159,7 +162,7 @@ MyGame.prototype.update = function () {
 
     if (this.mHobbes.update(
         this.mLevel.mPlatforms, this.mMinions, this.mSquirtGunShots,
-        this.kSquirtGunShotSprite)) {
+        this.kSquirtGunShotSprite, this.kWaterBalloonSprite)) {
         this.mNextScene = new GameOver();
         gEngine.GameLoop.stop();   
     }
@@ -182,6 +185,8 @@ MyGame.prototype.update = function () {
             }
         }
     }
+    
+    // Process
     if(this.mMinions.size() <= 0) {
         this.mNextScene = new WinScreen();
         gEngine.GameLoop.stop();
