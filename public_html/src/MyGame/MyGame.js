@@ -102,7 +102,7 @@ MyGame.prototype.initialize = function ()
     this.mCamera = new Camera(
         centerPos, // position of the camera
         width,                     // width of camera
-        [0, 0, 800, 600]         // viewport (orgX, orgY, width, height)
+        [0, 0, 1000, 700]         // viewport (orgX, orgY, width, height)
     );
     this.mCamera.setBackgroundColor([0, 0, 0, 1]);
 
