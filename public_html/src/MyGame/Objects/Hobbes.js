@@ -56,8 +56,9 @@ function Hobbes(spriteSheet, posX, posY) {
     //Water balloon and timer
     this.mHasBalloon = true;
     this.balloonTimer = null;
-}
-gEngine.Core.inheritPrototype(Hobbes, GameObject);
+};
+
+gEngine.Core.inheritPrototype(Hobbes, HittableGameObject);
 
 Hobbes.prototype.getHealth = function () {
     return this.mHP;
@@ -268,4 +269,9 @@ Hobbes.prototype.update = function(
     else {
         return false;
     }
+};
+
+Hobbes.prototype.onHit = function(collided)
+{
+    gEngine.Logger.info('Hobbes onHit');
 };
