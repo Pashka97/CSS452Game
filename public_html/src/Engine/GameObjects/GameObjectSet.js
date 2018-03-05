@@ -47,6 +47,20 @@ GameObjectSet.prototype.addToSet = function (obj) {
 };
 
 /**
+ * Add a GameObject set to the end of thei GameObjectSet
+ * @param set {GameObjectSet} the entire game object set to add on to the end
+ * @returns void
+ * @memberOf GameObjectSet
+ */
+GameObjectSet.prototype.appendSet = function(set)
+{
+    for(var i = 0; i < set.size(); i++)
+    {
+        this.addToSet(set.getObjectAt(i));
+    }
+};
+
+/**
  * Remove GameObject from GameObjectSet
  * @param {GameObject} obj to remove from GameObjectSet
  * @returns {void}

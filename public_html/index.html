@@ -1,20 +1,11 @@
 <!DOCTYPE html>
-<head>
-    <title>KELVIN 373</title>
-</head>
-<!--Use embedded shader code for now, in order to remove async loading complexity.-->
-
-<body onload="
-        var myGame = new MainMenu();
-        gEngine.Core.initializeEngineCore('GLCanvas', myGame);
-            ">
-    
-    <!-- the following says there are javascript source code contained in 
-             the external source files
-        -->
+<html>
+    <head>
+        <title>KELVIN 373</title>
+    </head>
+    <body onload="gEngine.Core.initializeEngineCore('GLCanvas', new MainMenu());">
         <!-- external library -->
         <script type="text/javascript" src="src/lib/gl-matrix.js"></script>
-
         <!-- Engine code -->
         <!-- Core of Engine --> 
         <script type="text/javascript" src="src/Engine/Core/Engine_Core.js"></script>
@@ -86,7 +77,6 @@
         <script type="text/javascript" src="src/Engine/Cameras/Camera_Xform.js"></script>
         <script type="text/javascript" src="src/Engine/Cameras/CameraState.js"></script>
         <script type="text/javascript" src="src/Engine/Cameras/CameraShake.js"></script>
-        
         <!-- Physics support -->
         <script type="text/javascript" src="src/Engine/Core/Engine_Physics.js"></script>
         <script type="text/javascript" src="src/Engine/RigidShapes/RigidShape.js"></script>
@@ -97,9 +87,6 @@
         <script type="text/javascript" src="src/Engine/RigidShapes/RigidRectangleCircle_Collision.js"></script>
         <script type="text/javascript" src="src/Engine/RigidShapes/RigidRectangle_Collision.js"></script>
         <!-- Client game code -->
-
-   
-    <!-- Client game code -->
         <script type="text/javascript" src="src/MyGame/Objects/Hobbes.js"></script>
         <script type="text/javascript" src="src/MyGame/Objects/WorldBounds.js"></script>
         <script type="text/javascript" src="src/MyGame/Objects/HealthBar.js"></script>
@@ -107,17 +94,20 @@
         <script type="text/javascript" src="src/MyGame/Objects/Platform.js"></script>
         <script type="text/javascript" src="src/MyGame/Objects/SphereMinion.js"></script>
         <script type="text/javascript" src="src/MyGame/Objects/SquirtGunShot.js"></script>
+        <script type="text/javascript" src="src/MyGame/Objects/Level.js"></script>
         <script type="text/javascript" src="src/MyGame/MainMenu.js"></script>
         <script type="text/javascript" src="src/MyGame/GameOver.js"></script>
         <script type="text/javascript" src="src/MyGame/WinScreen.js"></script>
-        <canvas id="GLCanvas" width="1000" height="700">
-        <!-- this message will show only if WebGL clearing failed -->
-        Your browser does not support the HTML5 canvas.
-    </canvas>
+        <script type="text/javascript" src="src/MyGame/BossLevel.js"></script>
 
-    KELVIN 373 - Fantastic Pineapple Brotherhood
-    <br />
-    Stephen Barkas, Blase Johnson,
-    Chris Johnston, Pavel Samsonov
-        
-</body>
+        <canvas id="GLCanvas" width="1000" height="700">
+            <!-- this message will show only if WebGL clearing failed -->
+            Your browser does not support the HTML5 canvas.
+        </canvas>
+
+        KELVIN 373 - Fantastic Pineapple Brotherhood
+        <br>
+        Stephen Barkas, Blase Johnson,
+        Chris Johnston, Pavel Samsonov
+    </body>
+</html>

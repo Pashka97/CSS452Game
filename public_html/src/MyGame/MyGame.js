@@ -18,21 +18,34 @@ function MyGame() {
     this.kHobbesSpriteSheet = "assets/hobbes.png";
     this.kPlatformTexture = "assets/platform.png";
     this.kSquirtGunShotSprite = "assets/squirtgunshot.png";
-    this.kBackground = "assets/Background.png";
+    this.kBackground = "assets/background_circuits.png";
+    this.kBackgroundNormal = "assets/background_circuits_normal.png";
+
     // World Bounds
     this.mWorldBounds = null;
-    // Camera
+
+    // tile sprites
+    this.kTile128 = "assets/tile128x128.png";
+    this.kTile256 = "assets/tile256x256.png";
+    this.kTile256x128 = "assets/tile256x128.png";
+    
+    // camera
     this.mCamera = null;
     // Background
     this.mBG = null;
-    // Objects
+
+    this.mLevel = null;
+    this.mGlobalLightSet = null;
+
+
+    // objects
+
     this.mObjects = null;
-    this.mPlatforms = null;
     this.mMinions = null;
     this.mSquirtGunShots = null;
     this.mHobbes = null;
     this.mHobbesHealthBar = null;
-    this.mFloor = null;
+
     // Next Scene to go to
     this.mNextScene = null;
 }
@@ -45,6 +58,10 @@ MyGame.prototype.loadScene = function() {
     gEngine.Textures.loadTexture(this.kPlatformTexture);
     gEngine.Textures.loadTexture(this.kSquirtGunShotSprite);
     gEngine.Textures.loadTexture(this.kBackground);
+    gEngine.Textures.loadTexture(this.kBackgroundNormal);
+    gEngine.Textures.loadTexture(this.kTile128);
+    gEngine.Textures.loadTexture(this.kTile256);
+    gEngine.Textures.loadTexture(this.kTile256x128);
 };
 
 MyGame.prototype.unloadScene = function() {
@@ -54,47 +71,54 @@ MyGame.prototype.unloadScene = function() {
     gEngine.Textures.unloadTexture(this.kPlatformTexture);
     gEngine.Textures.unloadTexture(this.kSquirtGunShotSprite);
     gEngine.Textures.unloadTexture(this.kBackground);
+    gEngine.Textures.unloadTexture(this.kBackgroundNormal);
+    gEngine.Textures.unloadTexture(this.kTile128);
+    gEngine.Textures.unloadTexture(this.kTile256);
+    gEngine.Textures.unloadTexture(this.kTile256x128);
     
     gEngine.Core.startScene(this.mNextScene);
 };
 
-MyGame.prototype.initialize = function () {
+MyGame.prototype.initialize = function ()
+{
+    // Level
+    this.mLevel = new BossLevel();
+
+    this.mGlobalLightSet = this.mLevel.mLightSet;
+
     // World Bounds
-    var centerPos = vec2.fromValues(50, 40);
-    var width = 100;
-    var height = 75;
-    this.mWorldBounds = new WorldBounds(centerPos, width, height);
-    // Camera
-    this.mCamera = new Camera(centerPos, width, [0, 0, 800, 600]);
-    this.mCamera.setBackgroundColor([0, 0, 1, 1]);
+    var centerPos = vec2.fromValues(this.mLevel.mCameraCenter[0], this.mLevel.mCameraCenter[1]);
+    var width = 300;
+    var height = 210;
+
+    // camera
+    this.mCamera = new Camera(
+        centerPos, // position of the camera
+        width,                     // width of camera
+        [0, 0, 800, 600]         // viewport (orgX, orgY, width, height)
+    );
+    this.mCamera.setBackgroundColor([0, 0, 0, 1]);
+
+    this.mLevel.setActiveCamera(this.mCamera);
+
     // Hobbes
-    this.mHobbes = new Hobbes(this.kHobbesSpriteSheet, 50, 35);
+    this.mHobbes = new Hobbes(this.kHobbesSpriteSheet, this.mLevel.mPlayerSpawn[0], this.mLevel.mPlayerSpawn[1]);
     // Hobbes' health bar
     this.mHobbesHealthBar = new HealthBar(
-        vec2.fromValues(-45, 20),
+        vec2.fromValues(-135, 60),
         2,
         20,
         "vertical",
         this.mHobbes
     );
-    // Floor
-    var floorRen = new Renderable();
-    floorRen.getXform().setPosition(50, 2.5);
-    floorRen.getXform().setSize(100, 5);
-    this.mFloor = new GameObject(floorRen);
-    var floorRB = new RigidRectangle(floorRen.getXform(), 100, 5);
-    floorRB.setMass(0);
-    this.mFloor.setRigidBody(floorRB);
-    // Platforms
-    this.mPlatforms = new GameObjectSet();
-    var pf = new Platform(this.kPlatformTexture, 20, 8, 30, 0);
-    this.mPlatforms.addToSet(pf);
-    this.mPlatforms.addToSet(this.mFloor);
+
     // Object set
     this.mObjects = new GameObjectSet();
+
+    // add all objects of the boss level to objects
+    this.mObjects.appendSet(this.mLevel.mPlatforms);
+
     this.mObjects.addToSet(this.mHobbes);
-    this.mObjects.addToSet(this.mFloor);
-    this.mObjects.addToSet(pf);
     //Set to store enemies
     this.mMinions = new GameObjectSet();
     // Squirt gun shot set
@@ -118,6 +142,8 @@ MyGame.prototype.draw = function () {
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
 
     this.mCamera.setupViewProjection();
+
+    this.mLevel.mBackgroundRenderable.draw(this.mCamera);
     
     this.mObjects.draw(this.mCamera);
     this.mMinions.draw(this.mCamera);
@@ -127,18 +153,22 @@ MyGame.prototype.draw = function () {
 };
 
 MyGame.prototype.update = function () {
+
     this.mCamera.update();  // to ensure proper interpolated movement effects
+    this.mLevel.update();
 
     if (this.mHobbes.update(
-        this.mPlatforms, this.mMinions, this.mSquirtGunShots,
+        this.mLevel.mPlatforms, this.mMinions, this.mSquirtGunShots,
         this.kSquirtGunShotSprite)) {
         this.mNextScene = new GameOver();
         gEngine.GameLoop.stop();   
     }
+
+    this.mLevel.mTrackedLight.set2DPosition(this.mHobbes.getXform().getPosition());
     
     this.mMinions.update(this.mCamera, this.mHobbes);
     this.mSquirtGunShots.update(this.mCamera);
-    this.mFloor.update();
+
     gEngine.Physics.processCollision(this.mObjects, []);
     
     // Destroy Spheres if hit by a shot
@@ -157,12 +187,10 @@ MyGame.prototype.update = function () {
         gEngine.GameLoop.stop();
     }
     // If Hobbes goes out of the world bounds, game over
-    if (this.mWorldBounds.outsideBounds(this.mHobbes)) {
+    if (this.mLevel.mWorldBounds.outsideBounds(this.mHobbes)) {
         this.mNextScene = new GameOver();
         gEngine.GameLoop.stop();
     }
     
     this.mHobbesHealthBar.update(this.mCamera);
 };
-
-

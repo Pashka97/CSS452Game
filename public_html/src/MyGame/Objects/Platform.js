@@ -12,13 +12,12 @@
  * @param x: x coordinate in world coordinates
  * @param y: y coordinate in world coordinates
  * @param w: width in world coordinates
+ * @param h: height
  * @param rot: rotation of platform in degrees
  * @note: x and y coordinates are for the bottom left corner of the platform
- * Platform also has a height equal to 1/8 of the width
  */
-function Platform(spriteTexture, x, y, w, rot) {
-    
-    var h = w / 8;
+function Platform(spriteTexture, x, y, w, h, rot) {
+
     this.pf = new TextureRenderable(spriteTexture);
     var xf = this.pf.getXform();
     xf.setSize(w, h);
