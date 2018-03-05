@@ -19,6 +19,7 @@ function HittableGameObject(renderable)
 {
     this.mIsDead = false;
     this.mIsHit = false;
+    GameObject.call(this, renderable);
 };
 
 gEngine.Core.inheritPrototype(HittableGameObject, GameObject);
