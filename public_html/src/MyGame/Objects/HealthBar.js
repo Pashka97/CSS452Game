@@ -5,9 +5,17 @@
 /* global vec2: false */
 "use strict";
 
-function HealthBar(relPos, width, height, character) {
+function HealthBar(relPos, width, height, orientation, character) {
     // Position relative to camera center position
     this.mRelPos = relPos;
+    // Orientation
+    this.mOrientation;
+    if (orientation === "vertical") {
+        this.mOrientation = "vertical";
+    }
+    else {
+        this.mOrientation = "horizontal";
+    }
     // Character to follow
     this.mCharacter = character;
     // Black rectangle for background
@@ -17,19 +25,26 @@ function HealthBar(relPos, width, height, character) {
     this.mBackground.setColor([0, 0, 0, 1]);
     // Set up meter bars
     this.mBars = [];
-    // Width of bar: 2/3 of meter width
-    var barWidth = 2/3 * width;
-    // Height of bar:
-    // (meter height - ( 1/6 of meter width * ( maxHealth + 1 ) ) ) / maxHealth
+    this.mBarWidth;
+    this.mBarHeight;
     var maxHealth = this.mCharacter.getHealth();
-    this.mBarHeight = (height - (1/6 * width * (maxHealth + 1))) / maxHealth;
+    // This is the size of the gap between the meter and the bars
+    this.mGap = .15;
+    if (this.mOrientation === "vertical") {
+        this.mBarWidth = width - (2 * this.mGap);
+        this.mBarHeight = (height - ((maxHealth + 1) * this.mGap)) / maxHealth;
+    }
+    else { // horizontal
+        this.mBarWidth = (width - ((maxHealth + 1) * this.mGap)) / maxHealth;
+        this.mBarHeight = height - (2 * this.mGap);
+    }
     for (var i = 0; i < this.mCharacter.getHealth(); ++i) {
         var bar = new Renderable();
         xform = bar.getXform();
-        xform.setSize(barWidth, this.mBarHeight);
+        xform.setSize(this.mBarWidth, this.mBarHeight);
         bar.setColor([0, 1, 0, 1]);
         this.mBars.push(bar);
-    }
+    }   
 }
 
 HealthBar.prototype.draw = function (camera) {
@@ -42,21 +57,31 @@ HealthBar.prototype.draw = function (camera) {
 };
 
 HealthBar.prototype.update = function(camera) {
-    // Update positions of Renderables
+    // Update position of background
     var xform = this.mBackground.getXform();
     var cameraPos = camera.getWCCenter();
     var xPos = cameraPos[0] + this.mRelPos[0];
     var yPos = cameraPos[1] + this.mRelPos[1];
     xform.setPosition(xPos, yPos);
-    // For bars, start at the bottom of the background and work up
-    var gap = xform.getWidth() / 6;
-    yPos -= (xform.getHeight() / 2);
-    yPos += gap + (this.mBarHeight / 2);
-    var currentPos = vec2.fromValues(xPos, yPos);
-    for (var i = 0; i < this.mBars.length; ++i) {
-        xform = this.mBars[i].getXform();
-        xform.setPosition(currentPos[0], currentPos[1]);
-        // Increment position
-        currentPos[1] += this.mBarHeight + gap;
+    // Update positions of bars
+    if (this.mOrientation === "vertical") {
+        yPos -= xform.getHeight() / 2;
+        yPos += this.mGap + (this.mBarHeight / 2);
+        for (var i = 0; i < this.mBars.length; ++i) {
+            xform = this.mBars[i].getXform();
+            xform.setPosition(xPos, yPos);
+            // Increment position
+            yPos += this.mBarHeight + this.mGap;
+        }
+    }
+    else { // horizontal
+        xPos -= xform.getWidth() / 2;
+        xPos += this.mGap + (this.mBarWidth / 2);
+        for (var i = 0; i < this.mBars.length; ++i) {
+            xform = this.mBars[i].getXform();
+            xform.setPosition(xPos, yPos);
+            // Increment position
+            xPos += this.mBarWidth + this.mGap;
+        }
     }
 };

@@ -74,6 +74,7 @@ MyGame.prototype.initialize = function () {
         vec2.fromValues(-45, 20),
         2,
         20,
+        "vertical",
         this.mHobbes
     );
     // Floor
