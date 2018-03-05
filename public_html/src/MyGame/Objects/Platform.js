@@ -28,7 +28,7 @@ function Platform(spriteTexture, x, y, w, h, rot) {
     
     var r = new RigidRectangle(xf, w, h);
         r.setMass(0);
-    this.setRigidBody(r);
+    this.addRigidBody(r);
     //this.toggleDrawRenderable();
     //this.toggleDrawRigidShape();
    

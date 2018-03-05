@@ -24,11 +24,9 @@ function Hobbes(spriteSheet, posX, posY) {
 
     GameObject.call(this, this.mRen);
     
-    //Height of rigidBody is slightly smaller than Hobbes sprite to preventing
-    //Bouncing when falling
     var rigidBody = new RigidRectangle(this.getXform(), width / 2, height);
-    this.setRigidBody(rigidBody);
     rigidBody.setRestitution(0);
+    this.addRigidBody(rigidBody);
     
     this.mBoundBox = new BoundingBox(
         vec2.fromValues(posX, posY),
@@ -70,7 +68,7 @@ Hobbes.prototype._setOnGroundState = function(platformSet) {
                      );
         if (status & BoundingBox.eboundCollideStatus.eCollideBottom) {
             this.mOnGround = true;
-            var velocity = this.mRigidBody.getVelocity();
+            var velocity = this.mRigidBodies[0].getVelocity();
             velocity[1] = 0;
             return;
         }
@@ -170,13 +168,13 @@ Hobbes.prototype.update = function(
     // Up arrow key for jump
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.W) &&
         this.mOnGround) {
-        var velocity = this.mRigidBody.getVelocity();
+        var velocity = this.mRigidBodies[0].getVelocity();
         velocity[1] = 45;
         this.mOnGround = false;
         this.mJumpTime = Date.now();
     }
     
-    this.mRigidBody.setAngularVelocity(0);
+    this.mRigidBodies[0].setAngularVelocity(0);
     GameObject.prototype.update.call(this);
     
     // Bounding box

@@ -47,7 +47,7 @@ function WaterBalloon(sprite, posX, posY, left) {
     }
     
     r.setAngularVelocityDelta(2);
-    this.setRigidBody(r);
+    this.addRigidBody(r);
     
     this.mBoundBox = new BoundingBox(
         vec2.fromValues(posX, posY),

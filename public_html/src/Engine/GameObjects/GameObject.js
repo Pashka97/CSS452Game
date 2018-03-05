@@ -21,7 +21,7 @@ function GameObject(renderableObj) {
     this.mRenderComponent = renderableObj;
     this.mVisible = true;
     this.mCurrentFrontDir = vec2.fromValues(0, 1);  // this is the current front direction of the object
-    this.mRigidBody = null;
+    this.mRigidBodies = [];
     this.mDrawRenderable = true;
     this.mDrawRigidShape = false; 
 }
@@ -76,10 +76,10 @@ GameObject.prototype.getCurrentFrontDir = function () { return this.mCurrentFron
  */
 GameObject.prototype.getRenderable = function () { return this.mRenderComponent; };
 
-GameObject.prototype.setRigidBody = function (r) {
-    this.mRigidBody = r;
+GameObject.prototype.addRigidBody = function (r) {
+    this.mRigidBodies.push(r);
 };
-GameObject.prototype.getRigidBody = function () { return this.mRigidBody; };
+GameObject.prototype.getRigidBodies = function () { return this.mRigidBodies; };
 GameObject.prototype.toggleDrawRenderable = function() { 
     this.mDrawRenderable = !this.mDrawRenderable; };
 GameObject.prototype.toggleDrawRigidShape = function() { 
@@ -87,14 +87,20 @@ GameObject.prototype.toggleDrawRigidShape = function() {
 
 GameObject.prototype.update = function () {
     // simple default behavior
-    if (this.mRigidBody !== null)
-            this.mRigidBody.update();
+    for (var i = 0; i < this.mRigidBodies.length; ++i) {
+        if (this.mRigidBodies[i] !== null) {
+            this.mRigidBodies[i].update();
+        }
+    }
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.T)) {
         this.toggleDrawRenderable();
     }
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.B)) {
-        if (this.mRigidBody !== null)
-            this.mRigidBody.toggleDrawBound();
+        for (var i = 0; i < this.mRigidBodies.length; ++i) {
+            if (this.mRigidBodies[i] !== null) {
+                this.mRigidBodies[i].togleDrawBound();
+            }
+        }
     }
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.R)) {
         this.toggleDrawRigidShape();
@@ -103,9 +109,13 @@ GameObject.prototype.update = function () {
 
 GameObject.prototype.draw = function (aCamera) {
     if (this.isVisible()) {
-        if (this.mDrawRenderable)
+        if (this.mDrawRenderable) {
             this.mRenderComponent.draw(aCamera);
-        if ((this.mRigidBody !== null) && (this.mDrawRigidShape))
-            this.mRigidBody.draw(aCamera);
+        }
+        for (var i = 0; i < this.mRigidBodies.length; ++i) {
+            if ((this.mRigidBodies[i] !== null) && (this.mDrawRigidShape)) {
+                this.mRigidBodies[i].draw(aCamera);
+            }
+        }
     }
 };
