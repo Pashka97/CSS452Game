@@ -174,14 +174,16 @@ MyGame.prototype.update = function () {
 
     gEngine.Physics.processCollision(this.mObjects, []);
     
-    // Destroy Spheres if hit by a shot
+    // process collisions
     for (var i = 0; i < this.mSquirtGunShots.size(); ++i) {
         var shot = this.mSquirtGunShots.getObjectAt(i);
         for (var j = 0; j < this.mMinions.size(); ++j) {
             var minion = this.mMinions.getObjectAt(j);
             if (shot.pixelTouches(minion, [])) {
-                this.mSquirtGunShots.removeFromSet(shot);
-                this.mMinions.removeFromSet(minion);
+                // call minion onhit and update its health
+                minion.onHit(shot);
+                // and then call shot on hit and set it to dead so that it will be removed later on
+                shot.onHit(minion);
             }
         }
         // or if they collide with the bounding boxes of the world
@@ -191,10 +193,24 @@ MyGame.prototype.update = function () {
             // check for a hit and remove the squirt gun shot if it was hit
             if(shot.pixelTouches(platform, []))
             {
-                this.mSquirtGunShots.removeFromSet(shot);
+                // call shot on hit and set it to dead so that it will be removed later on
+                // don't need to call hit on the platform because that is not a hittable game object
+                shot.onHit(platform);
             }
         }
     }
+
+    // for all water balloons process their splash damage
+
+
+    // remove all of the dead minions
+
+    // remove all of the dead water shots
+    for(var i = 0; this.mSquirtGunShots.size(); i++)
+    {
+
+    }
+
     
     // Process
     if(this.mMinions.size() <= 0) {
