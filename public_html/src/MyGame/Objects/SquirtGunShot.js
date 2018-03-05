@@ -22,12 +22,12 @@ function SquirtGunShot(sprite, posX, posY, left) {
     this.mParticles.update();
     
     
-    GameObject.call(this, this.mRen);
+    Projectile.call(this, this.mRen);
     
     // Whether the shot is traveling left or right
     this.mLeft = left;
 }
-gEngine.Core.inheritPrototype(SquirtGunShot, GameObject);
+gEngine.Core.inheritPrototype(SquirtGunShot, Projectile);
 
 SquirtGunShot.prototype.update = function() {
     var delta = 1.5;
@@ -72,4 +72,15 @@ SquirtGunShot.prototype.draw = function(aCamera) {
         this.mParticles.draw(aCamera);
     }
     this.mRen.draw(aCamera);
+};
+
+/**
+ * Called when the squirt gun shot collides with another object
+ * @param collided
+ */
+SquirtGunShot.prototype.onHit = function(collided)
+{
+    Projectile.prototype.onHit.call(this, collided);
+
+    gEngine.Logger.info('squirt gun shot hit');
 };
