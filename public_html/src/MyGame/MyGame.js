@@ -40,7 +40,6 @@ function MyGame() {
 
 
     // objects
-
     this.mObjects = null;
     this.mMinions = null;
     this.mSquirtGunShots = null;
@@ -117,6 +116,7 @@ MyGame.prototype.initialize = function ()
 
     // Object set
     this.mObjects = new GameObjectSet();
+    this.particleSet =  new GameObjectSet();
 
     // add all objects of the boss level to objects
     this.mObjects.appendSet(this.mLevel.mPlatforms);
@@ -147,10 +147,9 @@ MyGame.prototype.draw = function () {
     this.mCamera.setupViewProjection();
 
     this.mLevel.mBackgroundRenderable.draw(this.mCamera);
-    
     this.mObjects.draw(this.mCamera);
     this.mMinions.draw(this.mCamera);
-    this.mSquirtGunShots.draw(this.mCamera);
+    this.mSquirtGunShots.draw(this.mCamera); 
     // Health bar
     this.mHobbesHealthBar.draw(this.mCamera);
 };
@@ -206,6 +205,8 @@ MyGame.prototype.update = function () {
         this.mNextScene = new GameOver();
         gEngine.GameLoop.stop();
     }
+    
+    this.mSquirtGunShots.update(this.mCamera);
     
     this.mHobbesHealthBar.update(this.mCamera);
 };

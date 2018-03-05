@@ -45,13 +45,9 @@ SquirtGunShot.prototype.createParticle = function(atX, atY) {
     p.getRenderable().setColor([0, 0, 1, 1]);
     
     // size of the particle
-    var r = 1;
+    var r = 2;
     p.getXform().setSize(r, r);
-    
-    // final color
-    //var fr = 3.5 + Math.random();
-    //var fg = 0.4 + 0.1 * Math.random();
-    //var fb = 0.3 + 0.1 * Math.random();
+
     p.setFinalColor([0, 0, 1, 0.6]);
     
     // velocity on the particle
