@@ -194,8 +194,25 @@ MyGame.prototype.update = function () {
         for (var j = 0; j < this.mMinions.size(); ++j) {
             var minion = this.mMinions.getObjectAt(j);
             if (shot.pixelTouches(minion, [])) {
+
+                // if hit the boss
+                if(minion instanceof FloaterBoss)
+                {
+                    // remove some HP
+                    minion.mHP -= 3;
+
+                    // if dead, then remove it from the set
+                    if(minion.isDead())
+                    {
+                        this.mMinions.removeFromSet(minion);
+                    }
+                }
+                else
+                {
+                    this.mMinions.removeFromSet(minion);
+                }
+
                 this.mSquirtGunShots.removeFromSet(shot);
-                this.mMinions.removeFromSet(minion);
             }
         }
         // or if they collide with the bounding boxes of the world
