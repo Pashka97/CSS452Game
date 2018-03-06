@@ -52,6 +52,7 @@ function Hobbes(spriteSheet, posX, posY) {
     // standing on a Platform (being "on the ground")
     this.mOnGround = false;
     this.mJumpTime = null;
+    this.mNumJumps = 0;
     
     // Facing left or right
     this.eFacing = Object.freeze({
@@ -79,6 +80,7 @@ Hobbes.prototype._setOnGroundState = function(platformSet) {
     for (var i = 0; i < platformSet.size(); ++i) {
         if (this.mFloorBBox.intersectsBound(platformSet.getObjectAt(i).getBBox())) {
             this.mOnGround = true;
+            this.mNumJumps = 0;
             var velocity = this.mRigidBodies[0].getVelocity();
             velocity[1] = 0;
             return;
@@ -178,10 +180,11 @@ Hobbes.prototype.update = function(
     }
     // Up arrow key for jump
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.W) &&
-        this.mOnGround) {
+        (this.mOnGround || (!this.mOnGround && this.mNumJumps === 1))) {
         var velocity = this.mRigidBodies[0].getVelocity();
         velocity[1] = 45;
         this.mOnGround = false;
+        this.mNumJumps++;
         this.mJumpTime = Date.now();
     }
     
