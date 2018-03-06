@@ -105,11 +105,11 @@ GameObjectSet.prototype.update = function () {
  * @param {type} mHero
  * @returns {undefined}
  */
-GameObjectSet.prototype.update = function (mCam, mHero, minionSheet) {
+GameObjectSet.prototype.update = function (minionSet, mCam, mHero, minionSheet) {
     var i;
     for (i = 0; i < this.mSet.length; i++) {
         if(this.mSet[i] instanceof FloaterBoss) {
-            this.mSet[i].update(this.mSet, minionSheet, mHero);
+            this.mSet[i].update(minionSet, minionSheet, mHero);
         }
         else {
             this.mSet[i].update(mCam, mHero);

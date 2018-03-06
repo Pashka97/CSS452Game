@@ -5,7 +5,7 @@
 function FloaterBoss(spriteSheet, posX, posY, initialState) {
     this.ogX = posX;
     this.ogY = posY;
-    Boss.call(this, spriteSheet, posX, posY, 100);
+    Boss.call(this, spriteSheet, posX, posY, 150);
     this.eFacing = {
         idle:0,
         left:1,
@@ -177,11 +177,12 @@ FloaterBoss.prototype.rightDive = function(){
 };
 
 FloaterBoss.prototype.spawnMinions = function(xform, minionset, minionSheet){
-    var offset = 10;
+    
     //console.log("Max hp: " + this.maxHP + " Current hp: " + this.mHP);
-      for (var i = 0; i< (this.maxHP - this.mHP) / 5; i++) {
-       var m = new SphereMinion(minionSheet, xform.getXPos() + offset, xform.getYPos());
-       offset += 10;
+      for (var i = 0; i< 1+ ((this.maxHP - this.mHP) / 5); i++) {
+       var xRand = Math.random() * 60;
+       var yRand = Math.random() * 40;
+       var m = new SphereMinion(minionSheet, (xform.getXPos() - 30) + xRand, xform.getYPos() - 20 + yRand);
        minionset.addToSet(m); 
     }
     this.setNextState(this.activeState.setUpLeftDive);
@@ -206,5 +207,5 @@ FloaterBoss.prototype.moveTowards = function(x, y){
 };
 
 FloaterBoss.prototype.bounceBack = function () {
-    
+
 };

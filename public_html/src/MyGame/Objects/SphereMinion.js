@@ -19,7 +19,7 @@ function SphereMinion(spriteTexture, atX, atY) {
     var w = kMinionWidth;
     var h = kMinionHeight;
     
-    this.mSpeed = .1;
+    this.mSpeed = .18;
     this.mHealth = 1;
     
     this.mIsBouncingBack = false;

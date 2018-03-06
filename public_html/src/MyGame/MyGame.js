@@ -184,7 +184,8 @@ MyGame.prototype.update = function () {
 
     this.mLevel.mTrackedLight.set2DPosition(this.mHobbes.getXform().getPosition());
     
-    this.mMinions.update(this.mCamera,
+    this.mMinions.update(this.mMinions,
+        this.mCamera,
         this.mHobbes,
         this.kSphereMinion);
     
@@ -204,7 +205,7 @@ MyGame.prototype.update = function () {
                 if(minion instanceof FloaterBoss)
                 {
                     // remove some HP
-                    minion.mHP -= 3;
+                    minion.registerDamage(3);
 
                     // if dead, then remove it from the set
                     if(minion.isDead())
