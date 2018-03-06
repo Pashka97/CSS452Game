@@ -49,6 +49,9 @@ function MyGame() {
     this.mHobbes = null;
     this.mHobbesHealthBar = null;
     this.mBoss = null;
+    this.mBoss2 = null
+    this.mBossHealthBar = null;
+    this.mBoss2HealthBar = null;
 
     // Next Scene to go to
     this.mNextScene = null;
@@ -151,6 +154,21 @@ MyGame.prototype.initialize = function ()
     this.mMinions.addToSet(this.mBoss);
     this.mMinions.addToSet(this.mBoss2);
     gEngine.DefaultResources.setGlobalAmbientIntensity(3);
+    // Boss health bars
+    this.mBossHealthBar = new HealthBar(
+        vec2.fromValues(0, 100),
+        280,
+        5,
+        "horizontal",
+        this.mBoss
+    );
+    this.mBoss2HealthBar = new HealthBar(
+        vec2.fromValues(0, 90),
+        280,
+        5,
+        "horizontal",
+        this.mBoss2
+    );
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
@@ -166,8 +184,10 @@ MyGame.prototype.draw = function () {
     this.mObjects.draw(this.mCamera);
     this.mMinions.draw(this.mCamera);
     this.mSquirtGunShots.draw(this.mCamera);
-    // Health bar
+    // Health bars
     this.mHobbesHealthBar.draw(this.mCamera);
+    this.mBossHealthBar.draw(this.mCamera);
+    this.mBoss2HealthBar.draw(this.mCamera);
 };
 
 MyGame.prototype.update = function () {
@@ -244,5 +264,8 @@ MyGame.prototype.update = function () {
         gEngine.GameLoop.stop();
     }
     
+    // Health bars
     this.mHobbesHealthBar.update(this.mCamera);
+    this.mBossHealthBar.update(this.mCamera);
+    this.mBoss2HealthBar.update(this.mCamera);
 };

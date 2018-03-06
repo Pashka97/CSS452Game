@@ -117,6 +117,6 @@ Boss.prototype.isDead = function(){
     return this.mHP <= 0;
 };
 
-Boss.prototype.getHp = function(){
+Boss.prototype.getHealth = function(){
   return this.mHP;  
 };
