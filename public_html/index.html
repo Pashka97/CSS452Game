@@ -104,6 +104,16 @@
         <script type="text/javascript" src="src/MyGame/Objects/FloaterBoss.js"></script>
         <script type="text/javascript" src="src/MyGame/BossLevel.js"></script>
 
+        <script type="text/javascript">
+            window.addEventListener('keydown', function(e)
+            {
+                if(e.keyCode == 32 && e.target == document.body)
+                {
+                    e.preventDefault();
+                }
+            });
+        </script>
+
         <div id="wrapper">
             <h1>KELVIN 373 - Fantastic Pineapple Brotherhood</h1>
                 <canvas id="GLCanvas" width="1000" height="700">
