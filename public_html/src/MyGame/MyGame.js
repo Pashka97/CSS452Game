@@ -19,6 +19,7 @@ function MyGame() {
     this.kPlatformTexture = "assets/platform.png";
     this.kSquirtGunShotSprite = "assets/squirtgunshot.png";
     this.kFloaterBossSprite = "assets/spacebot-violet.png";
+    this.kFloaterBossSprite2 = "assets/spacebot-teal.png";
     this.kWaterBalloonSprite = "assets/Balloon.png";
     this.kBackground = "assets/background_circuits.png";
     this.kBackgroundNormal = "assets/background_circuits_normal.png";
@@ -63,6 +64,7 @@ MyGame.prototype.loadScene = function() {
     gEngine.Textures.loadTexture(this.kWaterBalloonSprite);
     gEngine.Textures.loadTexture(this.kBackground);
     gEngine.Textures.loadTexture(this.kFloaterBossSprite);
+    gEngine.Textures.loadTexture(this.kFloaterBossSprite2);
     gEngine.Textures.loadTexture(this.kBackgroundNormal);
     gEngine.Textures.loadTexture(this.kTile128);
     gEngine.Textures.loadTexture(this.kTile256);
@@ -77,7 +79,8 @@ MyGame.prototype.unloadScene = function() {
     gEngine.Textures.unloadTexture(this.kSquirtGunShotSprite);
     gEngine.Textures.unloadTexture(this.kWaterBalloonSprite);
     gEngine.Textures.unloadTexture(this.kBackground);
-    gEngine.Textures.unloadTexture(this.kFloaterBossSprite);  
+    gEngine.Textures.unloadTexture(this.kFloaterBossSprite);
+    gEngine.Textures.unloadTexture(this.kFloaterBossSprite2);
     gEngine.Textures.unloadTexture(this.kBackgroundNormal);
     gEngine.Textures.unloadTexture(this.kTile128);
     gEngine.Textures.unloadTexture(this.kTile256);
@@ -143,8 +146,10 @@ MyGame.prototype.initialize = function ()
     }
     
     //Initialize boss
-    this.mBoss = new FloaterBoss(this.kFloaterBossSprite, 30, 30);
+    this.mBoss = new FloaterBoss(this.kFloaterBossSprite, 150, 135, 1);
+    this.mBoss2 = new FloaterBoss(this.kFloaterBossSprite2, 135, 135, 3);
     this.mMinions.addToSet(this.mBoss);
+    this.mMinions.addToSet(this.mBoss2);
     gEngine.DefaultResources.setGlobalAmbientIntensity(3);
 };
 

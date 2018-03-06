@@ -18,8 +18,8 @@
 
 
 function Boss(spriteSheet, posX, posY, hp) {
-    this.ogSpeed = .3;
-    this.speed = .3;
+    this.ogSpeed = .6;
+    this.speed = this.ogSpeed;
     this.timer = 0;
     this.eventTime = 0;
     

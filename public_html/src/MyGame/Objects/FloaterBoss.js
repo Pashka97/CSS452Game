@@ -2,10 +2,10 @@
    vec2: false, BoundingBox: false */
 "use strict";
 
-function FloaterBoss(spriteSheet, posX, posY) {
+function FloaterBoss(spriteSheet, posX, posY, initialState) {
     this.ogX = posX;
     this.ogY = posY;
-    Boss.call(this, spriteSheet, posX, posY, 50);
+    Boss.call(this, spriteSheet, posX, posY, 100);
     this.eFacing = {
         idle:0,
         left:1,
@@ -20,7 +20,8 @@ function FloaterBoss(spriteSheet, posX, posY) {
         rightDive:4,
         spawnMinions:5
     };
-    this.currentState = this.activeState.idle;
+    this.currentState = initialState;
+    this.nextState = initialState;
     
     this.mFacing = this.eFacing.idle;
     this.mPrev = -1;
@@ -58,15 +59,7 @@ FloaterBoss.prototype._setSprite = function() {
 };
 
 FloaterBoss.prototype.update = function(minionset, minionSheet, hero){
-    GameObject.prototype.update.call(this);
-    
-    if(this.mInvincible) {
-        var currentTime = Date.now();
-        if(currentTime - this.damageTimer > 2000)   {
-            this.mInvincible = false;
-            this.mRen.setColor([1, 1, 1, 0]);
-        }
-    }
+    //GameObject.prototype.update.call(this);
     
     var xform = this.getXform();
     // Bounding box
@@ -133,6 +126,7 @@ FloaterBoss.prototype.executeState = function(minionset, minionSheet, hero){
 FloaterBoss.prototype.idle = function(){
     if(this.speed !== this.ogSpeed){
         this.speed = this.ogSpeed;
+        this.mRen.getXform().incRotationByRad(1);
     }
     this.setNextState(this.activeState.spawnMinions);
     this.moveTowards(this.ogX, this.ogY);
@@ -145,34 +139,41 @@ FloaterBoss.prototype.setUpLeftDive = function(hero){
     this.mFacing = this.eFacing.left;
     
     this.setNextState(this.activeState.leftDive);
-    this.moveTowards(hero.getXform().getXPos() + 25, hero.getXform().getYPos());
+    this.moveTowards(285, 75);
+    //this.moveTowards(hero.getXform().getXPos() + 25, hero.getXform().getYPos());
 };
 
 FloaterBoss.prototype.leftDive = function(){
-    if(this.speed !== this.ogSpeed){
-        this.speed *= 15;
+    if(this.speed === this.ogSpeed){
+        this.speed *= 2;
+        this.mRen.getXform().incRotationByRad(1);
     }
     this.setNextState(this.activeState.setUpRightDive);
-    this.moveTowards(this.getXform().getXPos() - 25, this.getXform().getYPos());
+    this.moveTowards(15, 75);
+    //this.moveTowards(this.getXform().getXPos() - 25, this.getXform().getYPos());
 };
 
 FloaterBoss.prototype.setUpRightDive = function(hero){
     if(this.speed !== this.ogSpeed){
         this.speed = this.ogSpeed;
+        this.mRen.getXform().incRotationByRad(-1);
     }
     this.mFacing = this.eFacing.right;
     
     this.setNextState(this.activeState.rightDive);
-    this.moveTowards(hero.getXform().getXPos() + 25, hero.getXform().getYPos());
+    this.moveTowards(15, 135);
+    //this.moveTowards(hero.getXform().getXPos() + 25, hero.getXform().getYPos());
 };
 
 FloaterBoss.prototype.rightDive = function(){
-    if(this.speed !== this.ogSpeed){
-        this.speed *= 15;
+    if(this.speed === this.ogSpeed){
+        this.speed *= 2;
+        this.mRen.getXform().incRotationByRad(-1);
     }
     
     this.setNextState(this.activeState.idle);
-    this.moveTowards(this.getXform().getXPos() + 25, this.getXform().getYPos());
+    this.moveTowards(285, 135);
+    //this.moveTowards(this.getXform().getXPos() + 25, this.getXform().getYPos());
 };
 
 FloaterBoss.prototype.spawnMinions = function(xform, minionset, minionSheet){
