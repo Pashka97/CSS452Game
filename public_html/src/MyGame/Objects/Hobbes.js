@@ -179,7 +179,7 @@ Hobbes.prototype.update = function(
         this.mRightWalking = false;
     }
     // Up arrow key for jump
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.W) &&
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space) &&
         (this.mOnGround || (!this.mOnGround && this.mNumJumps === 1))) {
         var velocity = this.mRigidBodies[0].getVelocity();
         velocity[1] = 45;
