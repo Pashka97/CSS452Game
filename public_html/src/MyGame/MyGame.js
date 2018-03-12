@@ -23,7 +23,9 @@ function MyGame() {
     this.kWaterBalloonSprite = "assets/Balloon.png";
     this.kBackground = "assets/background_circuits.png";
     this.kBackgroundNormal = "assets/background_circuits_normal.png";
-
+    this.kBGM = "assets/sounds/kelvin_373_main_theme.ogg";
+    this.kZapSFX = "assets/sounds/zap.ogg";
+    this.kHurtSFX = "assets/sounds/hurt.ogg";
     // World Bounds
     this.mWorldBounds = null;
 
@@ -51,7 +53,7 @@ function MyGame() {
     this.mHobbes = null;
     this.mHobbesHealthBar = null;
     this.mBoss = null;
-    this.mBoss2 = null
+    this.mBoss2 = null;
     this.mBossHealthBar = null;
     this.mBoss2HealthBar = null;
 
@@ -74,6 +76,10 @@ MyGame.prototype.loadScene = function() {
     gEngine.Textures.loadTexture(this.kTile128);
     gEngine.Textures.loadTexture(this.kTile256);
     gEngine.Textures.loadTexture(this.kTile256x128);
+    
+    gEngine.AudioClips.loadAudio(this.kZapSFX);
+    gEngine.AudioClips.loadAudio(this.kHurtSFX);
+    gEngine.AudioClips.loadAudio(this.kBGM);
 };
 
 MyGame.prototype.unloadScene = function() {
@@ -91,11 +97,18 @@ MyGame.prototype.unloadScene = function() {
     gEngine.Textures.unloadTexture(this.kTile256);
     gEngine.Textures.unloadTexture(this.kTile256x128);
     
+    gEngine.AudioClips.unloadAudio(this.kZapSFX);
+    gEngine.AudioClips.unloadAudio(this.kHurtSFX);
+    gEngine.AudioClips.unloadAudio(this.kBGM);
+    gEngine.AudioClips.stopBackgroundAudio();
+    
     gEngine.Core.startScene(this.mNextScene);
 };
 
 MyGame.prototype.initialize = function ()
 {
+    // BGM
+    gEngine.AudioClips.playBackgroundAudio(this.kBGM);
     // Level
     this.mLevel = new BossLevel();
 
@@ -223,7 +236,7 @@ MyGame.prototype.update = function () {
     
     if (this.mHobbes.update(
         this.mLevel.mPlatforms, this.mMinions, this.mSquirtGunShots,
-        this.kSquirtGunShotSprite, this.kWaterBalloonSprite)) {
+        this.kSquirtGunShotSprite, this.kWaterBalloonSprite, this.kHurtSFX)) {
         this.mNextScene = new GameOver();
         gEngine.GameLoop.stop();   
     }
@@ -246,16 +259,14 @@ MyGame.prototype.update = function () {
         for (var j = 0; j < this.mMinions.size(); ++j) {
             var minion = this.mMinions.getObjectAt(j);
             if (shot.pixelTouches(minion, [])) {
-
-                // if hit the boss
+                // Play sound effect
+                gEngine.AudioClips.playACue(this.kZapSFX);
                 if(minion instanceof FloaterBoss)
                 {
                     // remove some HP
                     minion.registerDamage(3);
-
                     // if dead, then remove it from the set
-                    if(minion.isDead())
-                    {
+                    if(minion.isDead()) {
                         this.mMinions.removeFromSet(minion);
                     }
                 }

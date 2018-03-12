@@ -10,6 +10,9 @@
 
 function MainMenu()
 {
+    // Assets
+    this.kBGM = "assets/sounds/kelvin_373_title.ogg";
+    
     this.camera = null;
     this.placeholderText = null;
     this.placeholderText2 = null;
@@ -19,6 +22,9 @@ gEngine.Core.inheritPrototype(MainMenu, Scene);
 
 MainMenu.prototype.initialize = function()
 {
+    // BGM
+    gEngine.AudioClips.playBackgroundAudio(this.kBGM);
+    
     this.camera = new Camera(
         vec2.fromValues(50, 50),
         100,
@@ -39,8 +45,13 @@ MainMenu.prototype.initialize = function()
     this.camera.setBackgroundColor([80 / 255, 114 / 255, 201 / 255, 1.0]);
 };
 
+MainMenu.prototype.loadScene = function() {
+    gEngine.AudioClips.loadAudio(this.kBGM);
+};
 
 MainMenu.prototype.unloadScene = function() {
+    gEngine.AudioClips.stopBackgroundAudio();
+    gEngine.AudioClips.unloadAudio(this.kBGM);
     var mainGame = new MyGame();
     gEngine.Core.startScene(mainGame);
 };

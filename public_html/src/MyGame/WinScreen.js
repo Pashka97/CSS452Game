@@ -4,7 +4,10 @@
  * and open the template in the editor.
  */
 function WinScreen() {
+    // Assets
     this.kBackground = "assets/Background.png";
+    this.kBGM = "assets/sounds/kelvin_373_title.ogg";
+    
     this.mCamera = null;
     this.mBG = null;
     this.messageArray = [];
@@ -14,16 +17,21 @@ gEngine.Core.inheritPrototype(WinScreen, Scene);
 
 WinScreen.prototype.loadScene = function() {
     gEngine.Textures.loadTexture(this.kBackground);
+    gEngine.AudioClips.loadAudio(this.kBGM);
 };
 
 WinScreen.prototype.unloadScene = function () {
     gEngine.Textures.unloadTexture(this.kBackground);
+    gEngine.AudioClips.stopBackgroundAudio();
+    gEngine.AudioClips.unloadAudio(this.kBGM);
     
     var restart = new MyGame();
     gEngine.Core.startScene(restart);
 };
 
 WinScreen.prototype.initialize = function () {
+    // BGM
+    gEngine.AudioClips.playBackgroundAudio(this.kBGM);
     // camera
     this.mCamera = new Camera(
         vec2.fromValues(50, 40), // position of the camera
