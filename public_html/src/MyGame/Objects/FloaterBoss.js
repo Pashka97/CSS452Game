@@ -12,7 +12,7 @@ function FloaterBoss(spriteSheet, posX, posY, initialState) {
     this.mSpeed = .6;
     
     // Hit Points
-    this.mMaxHP = 5;
+    this.mMaxHP = 150;
     this.mHP = this.mMaxHP;
     
     // I-frames
@@ -107,7 +107,7 @@ FloaterBoss.prototype._setSprite = function() {
 FloaterBoss.prototype.registerDamage = function(damageTaken) {
     if (!this.mInvincible) {
         this.mHP -= damageTaken;
-        this.mDamageTimer = Date.now();
+        this.mDamageTimer = 0;
         this.mInvincible = true;
         this.mRenderComponent.setColor([1, 0, 0, .5]);
     }
@@ -139,10 +139,11 @@ FloaterBoss.prototype.update = function(minionset, minionSheet, hero) {
     // Bounding box
     this.mBoundBox.setPosition(xform.getPosition());
     
-    // Check for turning invincibility time over
+    // Check if the invincibility period should be over
     if (this.mInvincible) {
-        var currentTime = Date.now();
-        if (currentTime - this.mDamageTimer > 1000)   {
+        this.mDamageTimer++;
+        if(this.mDamageTimer >= 30){
+            this.mDamageTimer = 0;
             this.mInvincible = false;
             this.mRenderComponent.setColor([1, 1, 1, 0]);
         }
@@ -157,7 +158,7 @@ FloaterBoss.prototype.executeState = function(minionset, minionSheet, hero) {
     if (this.mTimer > this.mEventTime) {
         this.mPastState = this.mState;
         this.mState = this.mNextState;
-        this.setEventTime(3);
+        this.setEventTime(4);
     }
     switch (this.mState) {
         case this.eStates.idle:
