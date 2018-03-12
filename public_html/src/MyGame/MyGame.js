@@ -34,6 +34,8 @@ function MyGame() {
     
     // camera
     this.mCamera = null;
+    this.requiredCam = null;
+    this.requiredTimer = 0;
     // Background
     this.mBG = null;
 
@@ -104,6 +106,13 @@ MyGame.prototype.initialize = function ()
     var width = 300;
     var height = 210;
 
+    this.requiredCam = new Camera(
+        centerPos, // position of the camera
+        300,                     // width of camera
+        [0, 0, 100, 70]         // viewport (orgX, orgY, width, height)
+    );
+    this.requiredCam.setBackgroundColor([0, 0, 0, 1]);
+    
     // camera
     this.mCamera = new Camera(
         centerPos, // position of the camera
@@ -178,23 +187,40 @@ MyGame.prototype.draw = function () {
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
 
     this.mCamera.setupViewProjection();
-
-    this.mLevel.mBackgroundRenderable.draw(this.mCamera);
     
-    this.mObjects.draw(this.mCamera);
-    this.mMinions.draw(this.mCamera);
-    this.mSquirtGunShots.draw(this.mCamera);
+    this.drawAll(this.mCamera);
+    
+    if(this.requiredTimer < 120){
+        this.requiredCam.setupViewProjection();
+        this.drawAll(this.requiredCam);
+    }
+};
+
+MyGame.prototype.drawAll = function (camera){
+    this.mLevel.mBackgroundRenderable.draw(camera);
+    
+    this.mObjects.draw(camera);
+    this.mMinions.draw(camera);
+    this.mSquirtGunShots.draw(camera);
     // Health bars
-    this.mHobbesHealthBar.draw(this.mCamera);
-    this.mBossHealthBar.draw(this.mCamera);
-    this.mBoss2HealthBar.draw(this.mCamera);
+    this.mHobbesHealthBar.draw(camera);
+    this.mBossHealthBar.draw(camera);
+    this.mBoss2HealthBar.draw(camera);
 };
 
 MyGame.prototype.update = function () {
 
+    this.requiredTimer++;
+    if(this.requiredTimer < 120){
+        this.requiredCam.panTo(this.mHobbes.getXform().getXPos(), this.mHobbes.getXform().getYPos());
+        //this.requiredCam.update();
+    }
+    
     this.mCamera.update();  // to ensure proper interpolated movement effects
     this.mLevel.update();
+    
 
+    
     if (this.mHobbes.update(
         this.mLevel.mPlatforms, this.mMinions, this.mSquirtGunShots,
         this.kSquirtGunShotSprite, this.kWaterBalloonSprite)) {

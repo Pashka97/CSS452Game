@@ -64,26 +64,25 @@ FloaterBoss.prototype.update = function(minionset, minionSheet, hero){
     var xform = this.getXform();
     // Bounding box
     this.mBoundBox.setPosition(xform.getPosition());
-    
-    // Check for turning invincibility time over
-    if(this.mInvincible) {
-        var currentTime = Date.now();
-        if(currentTime - this.damageTimer > 1000)   {
-            this.mInvincible = false;
-            this.mRen.setColor([1, 1, 1, 0]);
-        }
-    }
+
     this.timer++;
     this.executeState(minionset, minionSheet, hero);
     this._setSprite();
     this.mRen.updateAnimation();
+    
+        this.damageTimer++;
+        if(this.damageTimer >= 90){
+            this.damageTimer = 0;
+            this.mRen.setColor([1, 1, 1, 0]);
+        }
+    
 };
 
 FloaterBoss.prototype.executeState = function(minionset, minionSheet, hero){
     if(this.timer > this.eventTime){
         this.pastState = this.currentState;
         this.currentState = this.nextState;
-         this.setEventTime(3);
+         this.setEventTime(4);
     }
 
     switch (this.currentState) {

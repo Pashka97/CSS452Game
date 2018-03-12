@@ -22,6 +22,7 @@ function Boss(spriteSheet, posX, posY, hp) {
     this.speed = this.ogSpeed;
     this.timer = 0;
     this.eventTime = 0;
+    this.dmgTimer = 0;
     
     this.events = [0,1,2,3,4,5,6,7,8,9,10];
     
@@ -37,7 +38,7 @@ function Boss(spriteSheet, posX, posY, hp) {
 
     //boss Iframes
     this.damageTimer = null;
-    this.mInvincible = false;
+    //this.mInvincible = false;
     
     //the animation
     this.mRen = new SpriteAnimateRenderable(spriteSheet);
@@ -92,12 +93,14 @@ Boss.prototype._setSprite = function() {
 
 //Register that the boss has taken damage
 Boss.prototype.registerDamage = function (damageTaken) {
-    if(!this.mInvincible){
+    //if(!this.mInvincible){
         this.mHP -= damageTaken;
         this.damageTimer = Date.now();
-        this.mInvincible = true;
+       // this.mInvincible = true;
+       
         this.mRen.setColor([1, 0, 0, .5]);
-    }
+
+    //}
 };
 
 
