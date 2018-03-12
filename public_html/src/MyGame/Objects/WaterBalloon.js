@@ -125,8 +125,37 @@ WaterBalloon.prototype.draw = function (aCamera) {
     this.mRen.draw(aCamera);
 };
 
-WaterBalloon.prototype.processHit = function (particleSet) {
-    var newParticle = new ParticleCreator(this, 100, [1,1,1,1]);
-    particleSet.addToSet(newParticle);
+WaterBalloon.prototype.processHit = function (particleSet, minionSet) {
+    var i;
+    for(i = 0; i < 500; i++) {
+        var newParticle = new ParticleCreator(this, 1, [1,1,1,1]);
+        particleSet.addToSet(newParticle);
+    }
+    var posx = this.getXform().getXPos();
+    var posy = this.getXform().getYPos();
+    this.mBoundBox.setBounds(
+            vec2.fromValues(posx, posy),
+            kBalloonWidth * 20, 
+            kBalloonHeight * 20);
+    console.log(this.mBoundBox.mHeight);
+    for (var j = 0; j < minionSet.size(); ++j) {
+            var minion = minionSet.getObjectAt(j);
+            if (this.mBoundBox.intersectsBound(minion.getBBox())) {
+                if(minion instanceof FloaterBoss)
+                {
+                    // remove some HP
+                    minion.registerDamage(30);
+                    // if dead, then remove it from the set
+                    if(minion.isDead()) {
+                        minionSet.removeFromSet(minion);
+                    }
+                }
+                else
+                {
+                    minionSet.removeFromSet(minion);
+                }
+            }
+        }
+    
 };
 
