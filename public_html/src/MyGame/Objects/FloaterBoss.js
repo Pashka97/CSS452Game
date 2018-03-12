@@ -3,14 +3,21 @@
 "use strict";
 
 function FloaterBoss(spriteSheet, posX, posY, initialState) {
-    Boss.call(this, spriteSheet, posX, posY, 10);
-    
-    // Don't know what this is for
+    this.mTimer = 0;
+    this.mEventTime = 0;
     this.mOGX = posX;
     this.mOGY = posY;
     this.mOGSpeed = .6;
     
     this.mSpeed = .6;
+    
+    // Hit Points
+    this.mMaxHP = 5;
+    this.mHP = this.mMaxHP;
+    
+    // I-frames
+    this.mDamageTimer = null;
+    this.mInvincible = false;
     
     this.eDirs = Object.freeze({
         idle:0,
@@ -29,10 +36,32 @@ function FloaterBoss(spriteSheet, posX, posY, initialState) {
     
     this.mState = initialState;
     this.mNextState = initialState;
+    this.mPastState = -1;
     
     this.mDir = this.eDirs.idle;
     this.mPrevDir = -1;
-    this.mRenderComponent.setAnimationSpeed(8);
+    
+    // Renderable
+    var ren = new SpriteAnimateRenderable(spriteSheet);
+    ren.setColor([1, 1, 1, 0]);
+    ren.getXform().setPosition(posX, posY);
+    var width = 10;
+    var height = 20;
+    ren.getXform().setSize(width, height);
+    // Default, might want to change this
+    ren.setSpriteSequence(256, 0, 32, 64, 0, 0);
+    ren.setAnimationType(
+        SpriteAnimateRenderable.eAnimationType.eAnimateRight
+    );
+    ren.setAnimationSpeed(8);
+    GameObject.call(this, ren);
+    
+    // Bounding Box
+    this.mBoundBox = new BoundingBox(
+        vec2.fromValues(posX, posY),
+        width / 2,
+        height
+    );
     
     this.setState(0);
     
@@ -44,7 +73,7 @@ function FloaterBoss(spriteSheet, posX, posY, initialState) {
     this.mLeftWalking = false;
     this.mRightWalking = false;
 }
-gEngine.Core.inheritPrototype(FloaterBoss, Boss);
+gEngine.Core.inheritPrototype(FloaterBoss, GameObject);
 
 FloaterBoss.prototype._setDir = function(dir) {
     this.mPrevDir = this.mDir;
@@ -72,6 +101,36 @@ FloaterBoss.prototype._setSprite = function() {
         default:
             return;
     }
+};
+
+// Register that the boss has taken damage
+FloaterBoss.prototype.registerDamage = function(damageTaken) {
+    if (!this.mInvincible) {
+        this.mHP -= damageTaken;
+        this.mDamageTimer = Date.now();
+        this.mInvincible = true;
+        this.mRenderComponent.setColor([1, 0, 0, .5]);
+    }
+};
+
+FloaterBoss.prototype.setNextState = function(state) {
+    this.mNextState = state;
+};
+
+FloaterBoss.prototype.setState = function(state) {
+    this.mState = state;
+};
+
+FloaterBoss.prototype.setEventTime = function(seconds) {
+    this.mEventTime = this.mTimer + (seconds * 60);
+};
+
+FloaterBoss.prototype.isDead = function() {
+    return this.mHP <= 0;
+};
+
+FloaterBoss.prototype.getHealth = function() {
+  return this.mHP;  
 };
 
 FloaterBoss.prototype.update = function(minionset, minionSheet, hero) {
