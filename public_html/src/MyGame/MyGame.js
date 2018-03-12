@@ -5,11 +5,11 @@
 
 /*jslint node: true, vars: true */
 /*global gEngine, Scene, GameObjectset, TextureObject, Camera, vec2,
-  FontRenderable, SpriteRenderable, LineRenderable,
+  FontRenderable, SpriteRenderable, LineRenderable, FloaterBoss,
   GameObject */
 /* find out more about jslint: http://www.jslint.com/help.html */
 
-"use strict";  // Operate in Strict mode such that variables must be declared before used!
+"use strict";
 
 function MyGame() {
     // Assets
@@ -220,41 +220,32 @@ MyGame.prototype.update = function () {
         for (var j = 0; j < this.mMinions.size(); ++j) {
             var minion = this.mMinions.getObjectAt(j);
             if (shot.pixelTouches(minion, [])) {
-
                 // if hit the boss
-                if(minion instanceof FloaterBoss)
-                {
+                if (minion instanceof FloaterBoss) {
                     // remove some HP
                     minion.registerDamage(3);
-
                     // if dead, then remove it from the set
-                    if(minion.isDead())
-                    {
+                    if(minion.isDead()) {
                         this.mMinions.removeFromSet(minion);
                     }
                 }
-                else
-                {
+                else {
                     this.mMinions.removeFromSet(minion);
                 }
-
                 this.mSquirtGunShots.removeFromSet(shot);
             }
         }
         // or if they collide with the bounding boxes of the world
-        for(var j = 0; j < this.mLevel.mPlatforms.size(); j++)
-        {
+        for (var j = 0; j < this.mLevel.mPlatforms.size(); j++) {
             var platform = this.mLevel.mPlatforms.getObjectAt(j);
             // check for a hit and remove the squirt gun shot if it was hit
-            if(shot.pixelTouches(platform, []))
-            {
+            if (shot.pixelTouches(platform, [])) {
                 this.mSquirtGunShots.removeFromSet(shot);
             }
         }
     }
-    
     // Process
-    if(this.mMinions.size() <= 0) {
+    if (this.mMinions.size() <= 0) {
         this.mNextScene = new WinScreen();
         gEngine.GameLoop.stop();
     }
@@ -263,7 +254,6 @@ MyGame.prototype.update = function () {
         this.mNextScene = new GameOver();
         gEngine.GameLoop.stop();
     }
-    
     // Health bars
     this.mHobbesHealthBar.update(this.mCamera);
     this.mBossHealthBar.update(this.mCamera);
