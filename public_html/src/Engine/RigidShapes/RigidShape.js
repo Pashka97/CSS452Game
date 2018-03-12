@@ -74,6 +74,16 @@ RigidShape.prototype.flipVelocity = function() {
     this.mVelocity[1] = -this.mVelocity[1];
 };
 
+RigidShape.prototype.flipHorizontalVelocity = function()
+{
+    this.mVelocity[0] = -this.mVelocity[0];
+};
+
+RigidShape.prototype.flipVerticalVelocity = function()
+{
+    this.mVelocity[1] = -this.mVelocity[1];
+};
+
 RigidShape.prototype.travel = function() {
     var dt = gEngine.GameLoop.getUpdateIntervalInSeconds();
     

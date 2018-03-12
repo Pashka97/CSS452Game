@@ -299,10 +299,16 @@ MyGame.prototype.update = function () {
             }
         }
     }
-    
+
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Y))
+    {
+        this.mMinions = new GameObjectSet();
+    }
+
     // Process
     if(this.mMinions.size() <= 0) {
-        this.mNextScene = new WinScreen();
+        //this.mNextScene = new WinScreen();
+        this.mNextScene = new Level2();
         gEngine.GameLoop.stop();
     }
     // If Hobbes goes out of the world bounds, game over
