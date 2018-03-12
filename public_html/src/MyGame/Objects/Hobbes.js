@@ -144,7 +144,7 @@ Hobbes.prototype.registerDamage = function () {
 
 Hobbes.prototype.update = function(
     platformSet, enemySet, 
-    squirtGunShots, squirtGunShotSprite, waterBalloonSprite) {
+    squirtGunShots, squirtGunShotSprite, waterBalloonSprite, hurtSFX) {
     // Check if Hobbes is on ground by checking collisions with Platforms
     this._setOnGroundState(platformSet);
     
@@ -204,6 +204,8 @@ Hobbes.prototype.update = function(
     for(var i = 0; i < enemySet.size(); i++) {
         if (this.pixelTouches(enemySet.getObjectAt(i), [])) {
             if (!this.mInvincible) {
+                console.log(hurtSFX);
+                gEngine.AudioClips.playACue(hurtSFX);
                 this.registerDamage();
             }
             enemySet.getObjectAt(i).bounceBack();
