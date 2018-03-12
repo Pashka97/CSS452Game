@@ -264,7 +264,7 @@ MyGame.prototype.update = function () {
         for (var j = 0; j < this.mMinions.size(); ++j) {
             var minion = this.mMinions.getObjectAt(j);
             if (shot.pixelTouches(minion, [])) {
-                this.mSquirtGunShots.getObjectAt(i).processHit(this.mParticleSet);
+                this.mSquirtGunShots.getObjectAt(i).processHit(this.mParticleSet,this.mMinions);
 
                 // if hit the boss
 
@@ -294,7 +294,7 @@ MyGame.prototype.update = function () {
             // check for a hit and remove the squirt gun shot if it was hit
             if(shot.pixelTouches(platform, []))
             {
-                this.mSquirtGunShots.getObjectAt(i).processHit(this.mParticleSet);
+                this.mSquirtGunShots.getObjectAt(i).processHit(this.mParticleSet,this.mMinions);
                 this.mSquirtGunShots.removeFromSet(shot);
             }
         }

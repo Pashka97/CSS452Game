@@ -70,7 +70,7 @@ SquirtGunShot.prototype.draw = function(aCamera) {
     this.mRen.draw(aCamera);
 };
 
-SquirtGunShot.prototype.processHit = function (particleSet) {
-    var newParticle = new ParticleCreator(this, 100, [1,1,1,1]);
+SquirtGunShot.prototype.processHit = function (particleSet, minionSet) {
+    var newParticle = new ParticleCreator(this, 10, [1,1,1,1]);
     particleSet.addToSet(newParticle);
 };
