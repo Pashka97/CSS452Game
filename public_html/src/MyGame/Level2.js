@@ -36,6 +36,10 @@ function Level2()
     // square box sprite sheet
     this.kSquareBossSpriteSheet = "assets/squareboss_sprites.png";
 
+    this.kBGM = "assets/sounds/kelvin_373_main_theme.ogg";
+    this.kZapSFX = "assets/sounds/zap.ogg";
+    this.kHurtSFX = "assets/sounds/hurt.ogg";
+
     this.mainCamera = null;
 
     this.mLevel = null;
@@ -56,6 +60,10 @@ Level2.prototype.loadScene = function()
     gEngine.Textures.loadTexture(this.kProjectileTexture);
     gEngine.Textures.loadTexture(this.kWaterBalloonSprite);
     gEngine.Textures.loadTexture(this.kSquareBossSpriteSheet);
+
+    gEngine.AudioClips.loadAudio(this.kZapSFX);
+    gEngine.AudioClips.loadAudio(this.kHurtSFX);
+    gEngine.AudioClips.loadAudio(this.kBGM);
 };
 
 Level2.prototype.unloadScene = function()
@@ -69,11 +77,17 @@ Level2.prototype.unloadScene = function()
     gEngine.Textures.unloadTexture(this.kSquareBossSpriteSheet);
     gEngine.Textures.unloadTexture(this.kProjectileTexture);
 
+    gEngine.AudioClips.unloadAudio(this.kZapSFX);
+    gEngine.AudioClips.unloadAudio(this.kHurtSFX);
+    gEngine.AudioClips.unloadAudio(this.kBGM);
+    gEngine.AudioClips.stopBackgroundAudio();
+
     gEngine.Core.startScene(this.mNextScene);
 };
 
 Level2.prototype.initialize = function()
 {
+    gEngine.AudioClips.playBackgroundAudio(this.kBGM);
     // define all of the level specifics, like all of the objects
     // and positions
     this.mLevel = new AnotherLevel();
@@ -181,7 +195,8 @@ Level2.prototype.update = function()
     // so is totally ok when using the new square boss
     if(this.mPlayer.update(
         this.mLevel.mPlatforms, this.mMinions, this.mSquirtGunShots,
-        this.kSquirtGunShotSprite, this.kWaterBalloonSprite))
+        this.kSquirtGunShotSprite, this.kWaterBalloonSprite,
+            this.kHurtSFX))
     {
         this.mNextScene = new GameOver();
         gEngine.GameLoop.stop();
