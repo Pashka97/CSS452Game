@@ -36,10 +36,25 @@ function BossLevel()
     this.mTrackedLight.setFar(20);
     this.mTrackedLight.setDropOff(1);
     this.mTrackedLight.setIntensity(10);
-
+    
+    //Create a directional light
+    this.mDirectionalLight = new Light();
+    this.mDirectionalLight.setColor([1,1,1,1]);
+    this.mDirectionalLight.set2DPosition([150,105]);
+    this.mDirectionalLight.setZPos(5);
+    this.mDirectionalLight.setDirection([0,1,-1]);
+    this.mDirectionalLight.setLightType(Light.eLightType.eDirectionalLight);
+    this.mDirectionalLight.setInner(.2);
+    this.mDirectionalLight.setOuter(.4);
+    this.mDirectionalLight.setNear(1);
+    this.mDirectionalLight.setFar(20);
+    this.mDirectionalLight.setDropOff(1);
+    this.mDirectionalLight.setIntensity(1);
+    this.mDirectionalLight.isLightCastShadow(true);
     this.addLight(
         this.mTrackedLight
     );
+    this.addLight(this.mDirectionalLight);
 
     // set the spawnpoint
     this.setPlayerSpawnXY(175, 90);
