@@ -43,6 +43,7 @@ function MyGame() {
     this.mObjects = null;
     this.mMinions = null;
     this.mSquirtGunShots = null;
+    this.mParticleSet = null;
     this.mHobbes = null;
     this.mHobbesHealthBar = null;
 
@@ -116,11 +117,13 @@ MyGame.prototype.initialize = function ()
 
     // Object set
     this.mObjects = new GameObjectSet();
-    this.particleSet =  new GameObjectSet();
+    this.mParticleSet =  new GameObjectSet();
 
     // add all objects of the boss level to objects
     this.mObjects.appendSet(this.mLevel.mPlatforms);
-
+    
+    //initialize particle emitter set
+    this.mParticleSet = new GameObjectSet();
     this.mObjects.addToSet(this.mHobbes);
     //Set to store enemies
     this.mMinions = new GameObjectSet();
@@ -152,6 +155,7 @@ MyGame.prototype.draw = function () {
     this.mSquirtGunShots.draw(this.mCamera); 
     // Health bar
     this.mHobbesHealthBar.draw(this.mCamera);
+    this.mParticleSet.draw(this.mCamera);
 };
 
 MyGame.prototype.update = function () {
@@ -179,6 +183,7 @@ MyGame.prototype.update = function () {
         for (var j = 0; j < this.mMinions.size(); ++j) {
             var minion = this.mMinions.getObjectAt(j);
             if (shot.pixelTouches(minion, [])) {
+                this.mSquirtGunShots.getObjectAt(i).processHit(this.mParticleSet);
                 this.mSquirtGunShots.removeFromSet(shot);
                 this.mMinions.removeFromSet(minion);
             }
@@ -190,6 +195,7 @@ MyGame.prototype.update = function () {
             // check for a hit and remove the squirt gun shot if it was hit
             if(shot.pixelTouches(platform, []))
             {
+                this.mSquirtGunShots.getObjectAt(i).processHit(this.mParticleSet);
                 this.mSquirtGunShots.removeFromSet(shot);
             }
         }
@@ -209,4 +215,6 @@ MyGame.prototype.update = function () {
     this.mSquirtGunShots.update(this.mCamera);
     
     this.mHobbesHealthBar.update(this.mCamera);
+    
+    this.mParticleSet.update(this.mCamera);
 };
