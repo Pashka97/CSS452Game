@@ -210,7 +210,7 @@ Hobbes.prototype.update = function(
     }
     
     // Fire squirt gun shots
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space)) {
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.J)) {
         if (this.mFacing === this.eFacing.left) {
             var xPos = this.getXform().getPosition()[0] - 5;
             var yPos = this.getXform().getPosition()[1] +
@@ -230,7 +230,7 @@ Hobbes.prototype.update = function(
     }
     
     // Throw water balloon
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.F))   {
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.K))   {
         if(this.mHasBalloon) {
             if (this.mFacing === this.eFacing.left) {
                 var xPos = this.getXform().getPosition()[0] - 5;
