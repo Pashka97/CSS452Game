@@ -34,17 +34,20 @@ ParticleCreator.prototype.update = function(aCamera) {
 ParticleCreator.prototype.createParticle = function(atX, atY) {
     var life = 50;
     var p = new ParticleGameObject("assets/particle.png", atX, atY, life);
-    p.getRenderable().setColor(color);
+    p.getRenderable().setColor([0,0,1,1]);
     
     // size of the particle
-    var r = 10;
+    var r = 5;
     p.getXform().setSize(r, r);
 
-    p.setFinalColor(color);
+    p.setFinalColor([0,0,1,1]);
     
     // velocity on the particle
-
-    p.getParticle().setVelocity([3, 3]);
+    var rrrrr = Math.round(Math.random()) * 2 - 1;
+    var rrrr= Math.round(Math.random()) * 2 - 1; // -1-1
+    var rr = Math.random() *100 * rrrr;
+    var rrr = Math.random() *100 * rrrrr;
+    p.getParticle().setVelocity([rr, rrr]);
     
     // size delta
     p.setSizeDelta(0.98);
