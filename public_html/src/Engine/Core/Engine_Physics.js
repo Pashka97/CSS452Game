@@ -165,20 +165,24 @@ gEngine.Physics = (function () {
         var info = new CollisionInfo();
         for (r= 0; r<mRelaxationCount; r++) {
             for (i = 0; i<set.size(); i++) {
-                var objI = set.getObjectAt(i).getRigidBody();
-                for (j = i+1; j<set.size(); j++) {
-                    var objJ = set.getObjectAt(j).getRigidBody();
-                    if ( (objI.getInvMass() !== 0) || (objJ.getInvMass() !== 0) ) {
-                        if (objI.boundTest(objJ)) {
-                            if (objI.collisionTest(objJ, info)) {
-                                // make sure info is always from i towards j
-                                vec2.subtract(iToj, objJ.getCenter(), objI.getCenter());
-                                if (vec2.dot(iToj, info.getNormal()) < 0)
-                                    info.changeDir();
-                                // infoSet.push(info);
-                                positionalCorrection(objI, objJ, info);
-                                resolveCollision(objI, objJ, info);
-                                // info = new CollisionInfo();
+                for (var k = 0; k < set.getObjectAt(i).getRigidBodies().length; ++k) {
+                    var objI = set.getObjectAt(i).getRigidBodies()[k];
+                    for (j = i+1; j<set.size(); j++) {
+                        for (var m = 0; m < set.getObjectAt(j).getRigidBodies().length; ++m) {
+                            var objJ = set.getObjectAt(j).getRigidBodies()[m];
+                            if ( (objI.getInvMass() !== 0) || (objJ.getInvMass() !== 0) ) {
+                                if (objI.boundTest(objJ)) {
+                                    if (objI.collisionTest(objJ, info)) {
+                                        // make sure info is always from i towards j
+                                        vec2.subtract(iToj, objJ.getCenter(), objI.getCenter());
+                                        if (vec2.dot(iToj, info.getNormal()) < 0)
+                                            info.changeDir();
+                                        // infoSet.push(info);
+                                        positionalCorrection(objI, objJ, info);
+                                        resolveCollision(objI, objJ, info);
+                                        // info = new CollisionInfo();
+                                    }
+                                }
                             }
                         }
                     }

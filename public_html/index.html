@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>KELVIN 373</title>
+        <link rel="stylesheet" href="css/style.css" />
     </head>
     <body onload="gEngine.Core.initializeEngineCore('GLCanvas', new MainMenu());">
         <!-- external library -->
@@ -100,16 +101,48 @@
         <script type="text/javascript" src="src/MyGame/MainMenu.js"></script>
         <script type="text/javascript" src="src/MyGame/GameOver.js"></script>
         <script type="text/javascript" src="src/MyGame/WinScreen.js"></script>
+        <script type="text/javascript" src="src/MyGame/Objects/Boss.js"></script>
+        <script type="text/javascript" src="src/MyGame/Objects/FloaterBoss.js"></script>
         <script type="text/javascript" src="src/MyGame/BossLevel.js"></script>
 
-        <canvas id="GLCanvas" width="1000" height="700">
-            <!-- this message will show only if WebGL clearing failed -->
-            Your browser does not support the HTML5 canvas.
-        </canvas>
+        <script type="text/javascript">
+            window.addEventListener('keydown', function(e)
+            {
+                // ensure that hitting space on the page does not scroll down
+                if(e.keyCode == 32 && e.target == document.body)
+                {
+                    e.preventDefault();
+                }
+            });
+        </script>
 
-        KELVIN 373 - Fantastic Pineapple Brotherhood
-        <br>
-        Stephen Barkas, Blase Johnson,
-        Chris Johnston, Pavel Samsonov
+        <div id="wrapper">
+            <h1>KELVIN 373 - Fantastic Pineapple Brotherhood</h1>
+                <canvas id="GLCanvas" width="1000" height="700">
+                    <!-- this message will show only if WebGL clearing failed -->
+                    Your browser does not support the HTML5 canvas.
+                </canvas>
+            <div id="after">
+
+            <div id="controls">
+                <h2>Controls</h2>
+                <ul>
+                    <li>WASD - Movement (A and D are the only ones that do anything)</li>
+                    <li>J (Hold) - Fire Squirt Gun</li>
+                    <li>K (Click) - Throw Water Balloon</li>
+                </ul>
+            </div>
+
+            <h3>Feedback form: <a href="https://goo.gl/forms/CwnVVcnilDpsxkw93">Can be found here</a> </h3>
+
+            Stephen Barkas, Blase Johnson,
+            Chris Johnston, Pavel Samsonov
+
+            <br />
+            <a href="https://github.com/Chris-Johnston/CSS452Game">GitHub</a>
+            </div>
+
+        </div>
+
     </body>
 </html>

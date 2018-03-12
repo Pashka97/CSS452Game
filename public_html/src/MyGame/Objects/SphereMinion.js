@@ -19,7 +19,7 @@ function SphereMinion(spriteTexture, atX, atY) {
     var w = kMinionWidth;
     var h = kMinionHeight;
     
-    this.mSpeed = .1;
+    this.mSpeed = .18;
     this.mHealth = 1;
     
     this.mIsBouncingBack = false;
@@ -45,7 +45,7 @@ function SphereMinion(spriteTexture, atX, atY) {
     r.setVelocity(vx * speed, vy * speed);
     r.setMass(0);
     
-    this.setRigidBody(r);
+    this.addRigidBody(r);
     
     this.mBoundBox = new BoundingBox(
         vec2.fromValues(atX, atY),

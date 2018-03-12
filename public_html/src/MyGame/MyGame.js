@@ -18,6 +18,8 @@ function MyGame() {
     this.kHobbesSpriteSheet = "assets/hobbes.png";
     this.kPlatformTexture = "assets/platform.png";
     this.kSquirtGunShotSprite = "assets/squirtgunshot.png";
+    this.kFloaterBossSprite = "assets/spacebot-violet.png";
+    this.kFloaterBossSprite2 = "assets/spacebot-teal.png";
     this.kWaterBalloonSprite = "assets/Balloon.png";
     this.kBackground = "assets/background_circuits.png";
     this.kBackgroundNormal = "assets/background_circuits_normal.png";
@@ -32,6 +34,8 @@ function MyGame() {
     
     // camera
     this.mCamera = null;
+    this.requiredCam = null;
+    this.requiredTimer = 0;
     // Background
     this.mBG = null;
 
@@ -46,6 +50,10 @@ function MyGame() {
     this.mParticleSet = null;
     this.mHobbes = null;
     this.mHobbesHealthBar = null;
+    this.mBoss = null;
+    this.mBoss2 = null
+    this.mBossHealthBar = null;
+    this.mBoss2HealthBar = null;
 
     // Next Scene to go to
     this.mNextScene = null;
@@ -60,6 +68,8 @@ MyGame.prototype.loadScene = function() {
     gEngine.Textures.loadTexture(this.kSquirtGunShotSprite);
     gEngine.Textures.loadTexture(this.kWaterBalloonSprite);
     gEngine.Textures.loadTexture(this.kBackground);
+    gEngine.Textures.loadTexture(this.kFloaterBossSprite);
+    gEngine.Textures.loadTexture(this.kFloaterBossSprite2);
     gEngine.Textures.loadTexture(this.kBackgroundNormal);
     gEngine.Textures.loadTexture(this.kTile128);
     gEngine.Textures.loadTexture(this.kTile256);
@@ -74,6 +84,8 @@ MyGame.prototype.unloadScene = function() {
     gEngine.Textures.unloadTexture(this.kSquirtGunShotSprite);
     gEngine.Textures.unloadTexture(this.kWaterBalloonSprite);
     gEngine.Textures.unloadTexture(this.kBackground);
+    gEngine.Textures.unloadTexture(this.kFloaterBossSprite);
+    gEngine.Textures.unloadTexture(this.kFloaterBossSprite2);
     gEngine.Textures.unloadTexture(this.kBackgroundNormal);
     gEngine.Textures.unloadTexture(this.kTile128);
     gEngine.Textures.unloadTexture(this.kTile256);
@@ -94,11 +106,18 @@ MyGame.prototype.initialize = function ()
     var width = 300;
     var height = 210;
 
+    this.requiredCam = new Camera(
+        centerPos, // position of the camera
+        300,                     // width of camera
+        [0, 0, 100, 70]         // viewport (orgX, orgY, width, height)
+    );
+    this.requiredCam.setBackgroundColor([0, 0, 0, 1]);
+    
     // camera
     this.mCamera = new Camera(
         centerPos, // position of the camera
         width,                     // width of camera
-        [0, 0, 800, 600]         // viewport (orgX, orgY, width, height)
+        [0, 0, 1000, 700]         // viewport (orgX, orgY, width, height)
     );
     this.mCamera.setBackgroundColor([0, 0, 0, 1]);
 
@@ -125,10 +144,13 @@ MyGame.prototype.initialize = function ()
     //initialize particle emitter set
     this.mParticleSet = new GameObjectSet();
     this.mObjects.addToSet(this.mHobbes);
+
     //Set to store enemies
     this.mMinions = new GameObjectSet();
+    
     // Squirt gun shot set
     this.mSquirtGunShots = new GameObjectSet();
+    
     //Initialize enemies
     var y = 70;
     var x = 10;
@@ -138,7 +160,27 @@ MyGame.prototype.initialize = function ()
        this.mMinions.addToSet(m); 
     }
     
+    //Initialize boss
+    this.mBoss = new FloaterBoss(this.kFloaterBossSprite, 150, 135, 1);
+    this.mBoss2 = new FloaterBoss(this.kFloaterBossSprite2, 135, 135, 3);
+    this.mMinions.addToSet(this.mBoss);
+    this.mMinions.addToSet(this.mBoss2);
     gEngine.DefaultResources.setGlobalAmbientIntensity(3);
+    // Boss health bars
+    this.mBossHealthBar = new HealthBar(
+        vec2.fromValues(0, 100),
+        280,
+        5,
+        "horizontal",
+        this.mBoss
+    );
+    this.mBoss2HealthBar = new HealthBar(
+        vec2.fromValues(0, 90),
+        280,
+        5,
+        "horizontal",
+        this.mBoss2
+    );
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
@@ -148,21 +190,42 @@ MyGame.prototype.draw = function () {
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
 
     this.mCamera.setupViewProjection();
+    
+    this.drawAll(this.mCamera);
+    
+    if(this.requiredTimer < 120){
+        this.requiredCam.setupViewProjection();
+        this.drawAll(this.requiredCam);
+    }
+};
 
-    this.mLevel.mBackgroundRenderable.draw(this.mCamera);
-    this.mObjects.draw(this.mCamera);
-    this.mMinions.draw(this.mCamera);
-    this.mSquirtGunShots.draw(this.mCamera); 
-    // Health bar
-    this.mHobbesHealthBar.draw(this.mCamera);
+
+MyGame.prototype.drawAll = function (camera){
+    this.mLevel.mBackgroundRenderable.draw(camera);
+    
+    this.mObjects.draw(camera);
+    this.mMinions.draw(camera);
+    this.mSquirtGunShots.draw(camera);
     this.mParticleSet.draw(this.mCamera);
+    // Health bars
+    this.mHobbesHealthBar.draw(camera);
+    this.mBossHealthBar.draw(camera);
+    this.mBoss2HealthBar.draw(camera);
 };
 
 MyGame.prototype.update = function () {
 
+    this.requiredTimer++;
+    if(this.requiredTimer < 120){
+        this.requiredCam.panTo(this.mHobbes.getXform().getXPos(), this.mHobbes.getXform().getYPos());
+        //this.requiredCam.update();
+    }
+    
     this.mCamera.update();  // to ensure proper interpolated movement effects
     this.mLevel.update();
+    
 
+    
     if (this.mHobbes.update(
         this.mLevel.mPlatforms, this.mMinions, this.mSquirtGunShots,
         this.kSquirtGunShotSprite, this.kWaterBalloonSprite)) {
@@ -172,7 +235,12 @@ MyGame.prototype.update = function () {
 
     this.mLevel.mTrackedLight.set2DPosition(this.mHobbes.getXform().getPosition());
     
-    this.mMinions.update(this.mCamera, this.mHobbes);
+    this.mMinions.update(this.mMinions,
+        this.mCamera,
+        this.mHobbes,
+        this.kSphereMinion);
+    
+    
     this.mSquirtGunShots.update(this.mCamera);
 
     gEngine.Physics.processCollision(this.mObjects, []);
@@ -184,8 +252,24 @@ MyGame.prototype.update = function () {
             var minion = this.mMinions.getObjectAt(j);
             if (shot.pixelTouches(minion, [])) {
                 this.mSquirtGunShots.getObjectAt(i).processHit(this.mParticleSet);
+
+                // if hit the boss
+                if(minion instanceof FloaterBoss)
+                {
+                    // remove some HP
+                    minion.registerDamage(3);
+
+                    // if dead, then remove it from the set
+                    if(minion.isDead())
+                    {
+                        this.mMinions.removeFromSet(minion);
+                    }
+                }
+                else
+                {
+                    this.mMinions.removeFromSet(minion);
+                }
                 this.mSquirtGunShots.removeFromSet(shot);
-                this.mMinions.removeFromSet(minion);
             }
         }
         // or if they collide with the bounding boxes of the world
@@ -211,10 +295,12 @@ MyGame.prototype.update = function () {
         this.mNextScene = new GameOver();
         gEngine.GameLoop.stop();
     }
-    
-    this.mSquirtGunShots.update(this.mCamera);
-    
-    this.mHobbesHealthBar.update(this.mCamera);
-    
+        
     this.mParticleSet.update(this.mCamera);
+
+    // Health bars
+    this.mHobbesHealthBar.update(this.mCamera);
+    this.mBossHealthBar.update(this.mCamera);
+    this.mBoss2HealthBar.update(this.mCamera);
+
 };

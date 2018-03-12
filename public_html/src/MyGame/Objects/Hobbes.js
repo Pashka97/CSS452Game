@@ -24,22 +24,35 @@ function Hobbes(spriteSheet, posX, posY) {
 
     GameObject.call(this, this.mRen);
     
-    //Height of rigidBody is slightly smaller than Hobbes sprite to preventing
-    //Bouncing when falling
-    var rigidBody = new RigidRectangle(this.getXform(), width / 2, height);
-    this.setRigidBody(rigidBody);
-    rigidBody.setRestitution(0);
+    // Rigid body
+    // Width and height of rigid body
+    var mainRBWidth = width / 2;
+    var mainRBHeight = height;
+    // Rigid body
+    var mainRB = new RigidRectangle(this.getXform(), mainRBWidth, mainRBHeight);
+    mainRB.setRestitution(0);
+    this.addRigidBody(mainRB);
     
+    // Bounding box: hitbox for collision with enemies
     this.mBoundBox = new BoundingBox(
         vec2.fromValues(posX, posY),
         width / 2,
         height
+    );
+    // Bounding box for floor collision
+    var floorBBoxWidth = width - 7;
+    var floorBBoxHeight = .15;
+    this.mFloorBBox = new BoundingBox(
+        vec2.fromValues(posX, posY - (height / 2)),
+        floorBBoxWidth,
+        floorBBoxHeight
     );
     
     // Status flags
     // standing on a Platform (being "on the ground")
     this.mOnGround = false;
     this.mJumpTime = null;
+    this.mNumJumps = 0;
     
     // Facing left or right
     this.eFacing = Object.freeze({
@@ -56,6 +69,7 @@ function Hobbes(spriteSheet, posX, posY) {
     //Water balloon and timer
     this.mHasBalloon = true;
     this.balloonTimer = null;
+    this.squirtGunTimer = 0;
 }
 gEngine.Core.inheritPrototype(Hobbes, GameObject);
 
@@ -65,12 +79,10 @@ Hobbes.prototype.getHealth = function () {
 
 Hobbes.prototype._setOnGroundState = function(platformSet) {
     for (var i = 0; i < platformSet.size(); ++i) {
-        var status = this.mBoundBox.boundCollideStatus(
-                         platformSet.getObjectAt(i).getBBox()
-                     );
-        if (status & BoundingBox.eboundCollideStatus.eCollideBottom) {
+        if (this.mFloorBBox.intersectsBound(platformSet.getObjectAt(i).getBBox())) {
             this.mOnGround = true;
-            var velocity = this.mRigidBody.getVelocity();
+            this.mNumJumps = 0;
+            var velocity = this.mRigidBodies[0].getVelocity();
             velocity[1] = 0;
             return;
         }
@@ -133,7 +145,7 @@ Hobbes.prototype.registerDamage = function () {
 Hobbes.prototype.update = function(
     platformSet, enemySet, 
     squirtGunShots, squirtGunShotSprite, waterBalloonSprite) {
-    // Check if hobbes is on ground by checking collisions with Platforms
+    // Check if Hobbes is on ground by checking collisions with Platforms
     this._setOnGroundState(platformSet);
     
     // Left and right arrow keys for movement
@@ -168,19 +180,17 @@ Hobbes.prototype.update = function(
         this.mRightWalking = false;
     }
     // Up arrow key for jump
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.W) &&
-        this.mOnGround) {
-        var velocity = this.mRigidBody.getVelocity();
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space) &&
+        (this.mOnGround || (!this.mOnGround && this.mNumJumps === 1))) {
+        var velocity = this.mRigidBodies[0].getVelocity();
         velocity[1] = 45;
         this.mOnGround = false;
+        this.mNumJumps++;
         this.mJumpTime = Date.now();
     }
     
-    this.mRigidBody.setAngularVelocity(0);
+    this.mRigidBodies[0].setAngularVelocity(0);
     GameObject.prototype.update.call(this);
-    
-    // Bounding box
-    this.mBoundBox.setPosition(xform.getPosition());
     
     // Check for turning invincibility time over
     if(this.mInvincible) {
@@ -201,27 +211,31 @@ Hobbes.prototype.update = function(
     }
     
     // Fire squirt gun shots
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space)) {
-        if (this.mFacing === this.eFacing.left) {
-            var xPos = this.getXform().getPosition()[0] - 5;
-            var yPos = this.getXform().getPosition()[1] +
-                       (this.getXform().getHeight() / 4);
-            var shot = new SquirtGunShot(
-                squirtGunShotSprite, xPos, yPos, true);
-            squirtGunShots.addToSet(shot);
-        }
-        else { // facing right
-            var xPos = this.getXform().getPosition()[0] + 5;
-            var yPos = this.getXform().getPosition()[1] +
-                       (this.getXform().getHeight() / 4);
-            var shot = new SquirtGunShot(
-                squirtGunShotSprite, xPos, yPos, false);
-            squirtGunShots.addToSet(shot);
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.J)) {
+
+        if(Date.now() - this.squirtGunTimer >= 150) {
+            this.squirtGunTimer = Date.now();
+            if (this.mFacing === this.eFacing.left) {
+                var xPos = this.getXform().getPosition()[0] - 5;
+                var yPos = this.getXform().getPosition()[1] +
+                    (this.getXform().getHeight() / 4);
+                var shot = new SquirtGunShot(
+                    squirtGunShotSprite, xPos, yPos, true);
+                squirtGunShots.addToSet(shot);
+            }
+            else { // facing right
+                var xPos = this.getXform().getPosition()[0] + 5;
+                var yPos = this.getXform().getPosition()[1] +
+                    (this.getXform().getHeight() / 4);
+                var shot = new SquirtGunShot(
+                    squirtGunShotSprite, xPos, yPos, false);
+                squirtGunShots.addToSet(shot);
+            }
         }
     }
     
     // Throw water balloon
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.F))   {
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.K))   {
         if(this.mHasBalloon) {
             if (this.mFacing === this.eFacing.left) {
                 var xPos = this.getXform().getPosition()[0] - 5;
@@ -260,6 +274,13 @@ Hobbes.prototype.update = function(
     if(this.mOnGround === false && this.mJumpTime !== null) {
         xform.incYPosBy(((Date.now() - this.mJumpTime)/3000) * -1.3);
     }
+    
+    // Bounding boxes
+    var position = xform.getPosition();
+    this.mBoundBox.setPosition(position);
+    var floorXpos = position[0];
+    var floorYpos = position[1] - (xform.getHeight() / 2);
+    this.mFloorBBox.setPosition(vec2.fromValues(floorXpos, floorYpos));
     
     // Return true if Hobbes is dead
     if (this.mHP <= 0) {
