@@ -45,13 +45,9 @@ SquirtGunShot.prototype.createParticle = function(atX, atY) {
     p.getRenderable().setColor([0, 0, 1, 1]);
     
     // size of the particle
-    var r = 1;
+    var r = 2;
     p.getXform().setSize(r, r);
-    
-    // final color
-    //var fr = 3.5 + Math.random();
-    //var fg = 0.4 + 0.1 * Math.random();
-    //var fb = 0.3 + 0.1 * Math.random();
+
     p.setFinalColor([0, 0, 1, 0.6]);
     
     // velocity on the particle
@@ -72,4 +68,9 @@ SquirtGunShot.prototype.draw = function(aCamera) {
         this.mParticles.draw(aCamera);
     }
     this.mRen.draw(aCamera);
+};
+
+SquirtGunShot.prototype.processHit = function (particleSet) {
+    var newParticle = new ParticleCreator(this, 100, [1,1,1,1]);
+    particleSet.addToSet(newParticle);
 };
