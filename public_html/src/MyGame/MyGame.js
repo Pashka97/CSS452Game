@@ -46,10 +46,10 @@ function MyGame() {
 
 
     // objects
-
     this.mObjects = null;
     this.mMinions = null;
     this.mSquirtGunShots = null;
+    this.mParticleSet = null;
     this.mHobbes = null;
     this.mHobbesHealthBar = null;
     this.mBoss = null;
@@ -149,10 +149,13 @@ MyGame.prototype.initialize = function ()
 
     // Object set
     this.mObjects = new GameObjectSet();
+    this.mParticleSet =  new GameObjectSet();
 
     // add all objects of the boss level to objects
     this.mObjects.appendSet(this.mLevel.mPlatforms);
-
+    
+    //initialize particle emitter set
+    this.mParticleSet = new GameObjectSet();
     this.mObjects.addToSet(this.mHobbes);
 
     //Set to store enemies
@@ -209,12 +212,14 @@ MyGame.prototype.draw = function () {
     }
 };
 
+
 MyGame.prototype.drawAll = function (camera){
     this.mLevel.mBackgroundRenderable.draw(camera);
     
     this.mObjects.draw(camera);
     this.mMinions.draw(camera);
     this.mSquirtGunShots.draw(camera);
+    this.mParticleSet.draw(this.mCamera);
     // Health bars
     this.mHobbesHealthBar.draw(camera);
     this.mBossHealthBar.draw(camera);
@@ -259,8 +264,13 @@ MyGame.prototype.update = function () {
         for (var j = 0; j < this.mMinions.size(); ++j) {
             var minion = this.mMinions.getObjectAt(j);
             if (shot.pixelTouches(minion, [])) {
+                this.mSquirtGunShots.getObjectAt(i).processHit(this.mParticleSet);
+
+                // if hit the boss
+
                 // Play sound effect
                 gEngine.AudioClips.playACue(this.kZapSFX);
+
                 if(minion instanceof FloaterBoss)
                 {
                     // remove some HP
@@ -274,7 +284,6 @@ MyGame.prototype.update = function () {
                 {
                     this.mMinions.removeFromSet(minion);
                 }
-
                 this.mSquirtGunShots.removeFromSet(shot);
             }
         }
@@ -285,6 +294,7 @@ MyGame.prototype.update = function () {
             // check for a hit and remove the squirt gun shot if it was hit
             if(shot.pixelTouches(platform, []))
             {
+                this.mSquirtGunShots.getObjectAt(i).processHit(this.mParticleSet);
                 this.mSquirtGunShots.removeFromSet(shot);
             }
         }
@@ -300,9 +310,12 @@ MyGame.prototype.update = function () {
         this.mNextScene = new GameOver();
         gEngine.GameLoop.stop();
     }
-    
+        
+    this.mParticleSet.update(this.mCamera);
+
     // Health bars
     this.mHobbesHealthBar.update(this.mCamera);
     this.mBossHealthBar.update(this.mCamera);
     this.mBoss2HealthBar.update(this.mCamera);
+
 };
