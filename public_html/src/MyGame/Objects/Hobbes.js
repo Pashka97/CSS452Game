@@ -69,6 +69,7 @@ function Hobbes(spriteSheet, posX, posY) {
     //Water balloon and timer
     this.mHasBalloon = true;
     this.balloonTimer = null;
+    this.squirtGunTimer = 0;
 }
 gEngine.Core.inheritPrototype(Hobbes, GameObject);
 
@@ -210,22 +211,26 @@ Hobbes.prototype.update = function(
     }
     
     // Fire squirt gun shots
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.J)) {
-        if (this.mFacing === this.eFacing.left) {
-            var xPos = this.getXform().getPosition()[0] - 5;
-            var yPos = this.getXform().getPosition()[1] +
-                       (this.getXform().getHeight() / 4);
-            var shot = new SquirtGunShot(
-                squirtGunShotSprite, xPos, yPos, true);
-            squirtGunShots.addToSet(shot);
-        }
-        else { // facing right
-            var xPos = this.getXform().getPosition()[0] + 5;
-            var yPos = this.getXform().getPosition()[1] +
-                       (this.getXform().getHeight() / 4);
-            var shot = new SquirtGunShot(
-                squirtGunShotSprite, xPos, yPos, false);
-            squirtGunShots.addToSet(shot);
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.J)) {
+
+        if(Date.now() - this.squirtGunTimer >= 150) {
+            this.squirtGunTimer = Date.now();
+            if (this.mFacing === this.eFacing.left) {
+                var xPos = this.getXform().getPosition()[0] - 5;
+                var yPos = this.getXform().getPosition()[1] +
+                    (this.getXform().getHeight() / 4);
+                var shot = new SquirtGunShot(
+                    squirtGunShotSprite, xPos, yPos, true);
+                squirtGunShots.addToSet(shot);
+            }
+            else { // facing right
+                var xPos = this.getXform().getPosition()[0] + 5;
+                var yPos = this.getXform().getPosition()[1] +
+                    (this.getXform().getHeight() / 4);
+                var shot = new SquirtGunShot(
+                    squirtGunShotSprite, xPos, yPos, false);
+                squirtGunShots.addToSet(shot);
+            }
         }
     }
     
