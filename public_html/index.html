@@ -107,6 +107,7 @@
         <script type="text/javascript">
             window.addEventListener('keydown', function(e)
             {
+                // ensure that hitting space on the page does not scroll down
                 if(e.keyCode == 32 && e.target == document.body)
                 {
                     e.preventDefault();
