@@ -10,7 +10,7 @@ function Hobbes(spriteSheet, posX, posY) {
     this.damageTimer = null;
     this.mInvincible = false;
     
-    this.mRen = new SpriteAnimateRenderable(spriteSheet);
+    this.mRen = new LightRenderable(spriteSheet);
     this.mRen.setColor([1, 1, 1, 0]);
     this.mRen.getXform().setPosition(posX, posY);
     var width = 10;
