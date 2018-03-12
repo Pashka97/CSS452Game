@@ -14,6 +14,7 @@
 function MyGame() {
     // Assets
     this.kProjectileTexture = "assets/particle.png";
+    this.kExplosion = "assets/explosion.png";
     this.kSphereMinion = "assets/sphere_enemy.png";
     this.kHobbesSpriteSheet = "assets/hobbes.png";
     this.kPlatformTexture = "assets/platform.png";
@@ -37,7 +38,7 @@ function MyGame() {
     // camera
     this.mCamera = null;
     this.requiredCam = null;
-    this.requiredTimer = 0;
+    this.requiredTimer = 1000;
     // Background
     this.mBG = null;
 
@@ -63,6 +64,7 @@ function MyGame() {
 gEngine.Core.inheritPrototype(MyGame, Scene);
 
 MyGame.prototype.loadScene = function() {
+    gEngine.Textures.loadTexture(this.kExplosion);
     gEngine.Textures.loadTexture(this.kProjectileTexture);
     gEngine.Textures.loadTexture(this.kSphereMinion);
     gEngine.Textures.loadTexture(this.kHobbesSpriteSheet);
@@ -83,6 +85,7 @@ MyGame.prototype.loadScene = function() {
 };
 
 MyGame.prototype.unloadScene = function() {
+    gEngine.Textures.unloadTexture(this.kExplosion);
     gEngine.Textures.unloadTexture(this.kProjectileTexture);
     gEngine.Textures.unloadTexture(this.kSphereMinion);
     gEngine.Textures.unloadTexture(this.kHobbesSpriteSheet);
@@ -119,12 +122,8 @@ MyGame.prototype.initialize = function ()
     var width = 300;
     var height = 210;
 
-    this.requiredCam = new Camera(
-        centerPos, // position of the camera
-        300,                     // width of camera
-        [0, 0, 100, 70]         // viewport (orgX, orgY, width, height)
-    );
-    this.requiredCam.setBackgroundColor([0, 0, 0, 1]);
+    
+    //this.requiredCam.setBackgroundColor([0, 0, 0, 1]);
     
     // camera
     this.mCamera = new Camera(
@@ -167,11 +166,6 @@ MyGame.prototype.initialize = function ()
     //Initialize enemies
     var y = 70;
     var x = 10;
-    for (var i = 1; i<=5; i++) {
-        var m = new SphereMinion(this.kSphereMinion, x, y);
-        x += 20;
-       this.mMinions.addToSet(m); 
-    }
     
     //Initialize boss
     this.mBoss = new FloaterBoss(this.kFloaterBossSprite, 150, 135, 1);
@@ -277,14 +271,25 @@ MyGame.prototype.update = function () {
                     minion.registerDamage(3);
                     // if dead, then remove it from the set
                     if(minion.isDead()) {
+                        this.bossCameraShake(minion);
+                        this.requiredTimer = 0;
+                        var explosion = new Explosion(this.kExplosion, minion.getXform().getXPos(), minion.getXform().getYPos());
                         this.mMinions.removeFromSet(minion);
+                        
+                        this.mMinions.addToSet(explosion);
                     }
                 }
-                else
+                else if(minion instanceof SphereMinion)
                 {
                     this.mMinions.removeFromSet(minion);
                 }
                 this.mSquirtGunShots.removeFromSet(shot);
+            }
+            if(minion instanceof Explosion) {
+                if(minion.isDead()) {
+                    console.log("in explosion branch");
+                    this.mMinions.removeFromSet(minion);
+                }
             }
         }
         // or if they collide with the bounding boxes of the world
@@ -296,6 +301,16 @@ MyGame.prototype.update = function () {
             {
                 this.mSquirtGunShots.getObjectAt(i).processHit(this.mParticleSet,this.mMinions);
                 this.mSquirtGunShots.removeFromSet(shot);
+            }
+        }
+    }
+    
+    for (var j = 0; j < this.mMinions.size(); ++j) {
+         var minion = this.mMinions.getObjectAt(j);
+         if(minion instanceof Explosion) {
+            if(minion.isDead()) {
+                console.log("in explosion branch");
+                this.mMinions.removeFromSet(minion);
             }
         }
     }
@@ -317,5 +332,21 @@ MyGame.prototype.update = function () {
     this.mHobbesHealthBar.update(this.mCamera);
     this.mBossHealthBar.update(this.mCamera);
     this.mBoss2HealthBar.update(this.mCamera);
+    if(this.requiredTimer < 120) {
+        this.bossCameraShake(this.mHobbes);
+    }
+};
 
+MyGame.prototype.bossCameraShake = function (minion) {
+    var randX = Math.random() * 10;
+    var randY = Math.random() * 10
+    var lol = [0,0]
+    var xf = minion.getXform();
+    lol[0] += randX + xf.getXPos();
+    lol[1] += randY + xf.getYPos();
+    this.requiredCam = new Camera(
+        lol, // position of the camera
+        50,                     // width of camera
+        [0, 0, 100, 70]         // viewport (orgX, orgY, width, height)
+    );    
 };
