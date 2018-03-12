@@ -1,56 +1,72 @@
 /* global gEngine: false, GameObject: false, SpriteAnimateRenderable: false,
-   vec2: false, BoundingBox: false */
+   vec2: false, BoundingBox: false, Boss: false */
 "use strict";
 
 function FloaterBoss(spriteSheet, posX, posY, initialState) {
-    this.ogX = posX;
-    this.ogY = posY;
-    Boss.call(this, spriteSheet, posX, posY, 150);
-    this.eFacing = {
+    Boss.call(this, spriteSheet, posX, posY, 10);
+    
+    // Don't know what this is for
+    this.mOGX = posX;
+    this.mOGY = posY;
+    this.mOGSpeed = .6;
+    
+    this.mSpeed = .6;
+    
+    this.eDirs = Object.freeze({
         idle:0,
         left:1,
         right:2
-    };
+    });
     
-    this.activeState = {
+    this.eStates = Object.freeze({
         idle:0,
         setUpLeftDive:1,
         leftDive:2,
         setUpRightDive:3,
         rightDive:4,
         spawnMinions:5
-    };
-    this.currentState = initialState;
-    this.nextState = initialState;
+    });
     
-    this.mFacing = this.eFacing.idle;
-    this.mPrev = -1;
-    this.mRen.setAnimationSpeed(8);
+    this.mState = initialState;
+    this.mNextState = initialState;
+    
+    this.mDir = this.eDirs.idle;
+    this.mPrevDir = -1;
+    this.mRenderComponent.setAnimationSpeed(8);
     
     this.setState(0);
+    
+    // Standing on a Platform (being "on the ground")
+    this.mOnGround = false;
+    // Walking
+    this.mPrevLeftWalking = false;
+    this.mPrevRightWalking = false;
+    this.mLeftWalking = false;
+    this.mRightWalking = false;
 }
 gEngine.Core.inheritPrototype(FloaterBoss, Boss);
 
+FloaterBoss.prototype._setDir = function(dir) {
+    this.mPrevDir = this.mDir;
+    this.mDir = dir;
+};
+
 // Sets which sprite or animated sequence to use on the sprite sheet
 FloaterBoss.prototype._setSprite = function() {
-    switch (this.mFacing) {
-        case this.eFacing.idle:
-            if(this.mPrev !== this.eFacing.idle){
-                this.mRen.setSpriteSequence(128, 0, 48, 64, 3, 0);
-                this.mPrev = this.eFacing.idle;
+    switch (this.mDir) {
+        case this.eDirs.idle:
+            if (this.mPrevDir !== this.eDirs.idle) {
+                this.mRenderComponent.setSpriteSequence(128, 0, 48, 64, 3, 0);
+            }
+            break;       
+        case this.eDirs.left:
+            if (this.mPrevDir !== this.eDirs.left) {
+                this.mRenderComponent.setSpriteSequence(64, 0, 48, 64, 3, 0);
             }
             break;
-                
-        case this.eFacing.left:
-            if(this.mPrev !== this.eFacing.left){
-                this.mRen.setSpriteSequence(64, 0, 48, 64, 3, 0);
-                this.mPrev = this.eFacing.left;
-            }
-            break;
-        case this.eFacing.right:
-            if(this.mPrev !== this.eFacing.right){
-                this.mRen.setSpriteSequence(192, 0, 48, 64, 3, 0);
-                this.mPrev = this.eFacing.right;
+        case this.eDirs.right:
+            if (this.mPrevDir !== this.eDirs.right) {
+                this.mRenderComponent.setSpriteSequence(192, 0, 48, 64, 3, 0);
             }
             break;
         default:
@@ -58,154 +74,136 @@ FloaterBoss.prototype._setSprite = function() {
     }
 };
 
-FloaterBoss.prototype.update = function(minionset, minionSheet, hero){
+FloaterBoss.prototype.update = function(minionset, minionSheet, hero) {
     //GameObject.prototype.update.call(this);
-    
     var xform = this.getXform();
     // Bounding box
     this.mBoundBox.setPosition(xform.getPosition());
     
     // Check for turning invincibility time over
-    if(this.mInvincible) {
+    if (this.mInvincible) {
         var currentTime = Date.now();
-        if(currentTime - this.damageTimer > 1000)   {
+        if (currentTime - this.mDamageTimer > 1000)   {
             this.mInvincible = false;
-            this.mRen.setColor([1, 1, 1, 0]);
+            this.mRenderComponent.setColor([1, 1, 1, 0]);
         }
     }
-    this.timer++;
+    this.mTimer++;
     this.executeState(minionset, minionSheet, hero);
     this._setSprite();
-    this.mRen.updateAnimation();
+    this.mRenderComponent.updateAnimation();
 };
 
-FloaterBoss.prototype.executeState = function(minionset, minionSheet, hero){
-    if(this.timer > this.eventTime){
-        this.pastState = this.currentState;
-        this.currentState = this.nextState;
-         this.setEventTime(3);
+FloaterBoss.prototype.executeState = function(minionset, minionSheet, hero) {
+    if (this.mTimer > this.mEventTime) {
+        this.mPastState = this.mState;
+        this.mState = this.mNextState;
+        this.setEventTime(3);
     }
-
-    switch (this.currentState) {
-        case this.activeState.idle:
-            
-                this.idle();
-            
+    switch (this.mState) {
+        case this.eStates.idle:
+            this.idle();
             break;
-        case this.activeState.setUpLeftDive:
-            
-                this.setUpLeftDive(hero);
-            
+        case this.eStates.setUpLeftDive:
+            this.setUpLeftDive(hero);
             break;
-        case this.activeState.leftDive:
-            
-                this.leftDive();
-            
+        case this.eStates.leftDive:
+            this.leftDive();
             break;
-        case this.activeState.setUpRightDive:
-            
-                this.setUpRightDive(hero);
-            
+        case this.eStates.setUpRightDive:
+            this.setUpRightDive(hero);
             break;
-        case this.activeState.rightDive:
-            
-                this.rightDive();
-            
+        case this.eStates.rightDive:
+            this.rightDive();
             break;
-        case this.activeState.spawnMinions:
-            if(this.currentState !== this.pastState){
-                this.pastState = this.currentState;
+        case this.eStates.spawnMinions:
+            if (this.mState !== this.mPastState) {
+                this.mPastState = this.mState;
                 this.spawnMinions(this.getXform(), minionset, minionSheet);
             }
             break;
         default:
-            return;
+            break;
     }
 };
 
-FloaterBoss.prototype.idle = function(){
-    if(this.speed !== this.ogSpeed){
-        this.speed = this.ogSpeed;
-        this.mRen.getXform().incRotationByRad(1);
+FloaterBoss.prototype.idle = function() {
+    if (this.mSpeed !== this.mOGSpeed) {
+        this.mSpeed = this.mOGSpeed;
+        this.mRenderComponent.getXform().incRotationByRad(1);
     }
-    this.setNextState(this.activeState.spawnMinions);
-    this.moveTowards(this.ogX, this.ogY);
+    this.setNextState(this.eStates.spawnMinions);
+    this.moveTowards(this.mOGX, this.mOGY);
 };
 
-FloaterBoss.prototype.setUpLeftDive = function(hero){
-    if(this.speed !== this.ogSpeed){
-        this.speed = this.ogSpeed;
+FloaterBoss.prototype.setUpLeftDive = function(hero) {
+    if (this.mSpeed !== this.mOGSpeed) {
+        this.mSpeed = this.mOGSpeed;
     }
-    this.mFacing = this.eFacing.left;
-    
-    this.setNextState(this.activeState.leftDive);
+    this._setDir(this.eDirs.left);
+    this.setNextState(this.eStates.leftDive);
     this.moveTowards(285, 75);
     //this.moveTowards(hero.getXform().getXPos() + 25, hero.getXform().getYPos());
 };
 
-FloaterBoss.prototype.leftDive = function(){
-    if(this.speed === this.ogSpeed){
-        this.speed *= 2;
-        this.mRen.getXform().incRotationByRad(1);
+FloaterBoss.prototype.leftDive = function() {
+    if (this.mSpeed === this.mOGSpeed) {
+        this.mSpeed *= 2;
+        this.mRenderComponent.getXform().incRotationByRad(1);
     }
-    this.setNextState(this.activeState.setUpRightDive);
+    this.setNextState(this.eStates.setUpRightDive);
     this.moveTowards(15, 75);
     //this.moveTowards(this.getXform().getXPos() - 25, this.getXform().getYPos());
 };
 
-FloaterBoss.prototype.setUpRightDive = function(hero){
-    if(this.speed !== this.ogSpeed){
-        this.speed = this.ogSpeed;
-        this.mRen.getXform().incRotationByRad(-1);
+FloaterBoss.prototype.setUpRightDive = function(hero) {
+    if (this.mSpeed !== this.mOGSpeed) {
+        this.mSpeed = this.mOGSpeed;
+        this.mRenderComponent.getXform().incRotationByRad(-1);
     }
-    this.mFacing = this.eFacing.right;
-    
-    this.setNextState(this.activeState.rightDive);
+    this._setDir(this.eDirs.right);
+    this.setNextState(this.eStates.rightDive);
     this.moveTowards(15, 135);
     //this.moveTowards(hero.getXform().getXPos() + 25, hero.getXform().getYPos());
 };
 
-FloaterBoss.prototype.rightDive = function(){
-    if(this.speed === this.ogSpeed){
-        this.speed *= 2;
-        this.mRen.getXform().incRotationByRad(-1);
+FloaterBoss.prototype.rightDive = function() {
+    if (this.mSpeed === this.mOGSpeed) {
+        this.mSpeed *= 2;
+        this.mRenderComponent.getXform().incRotationByRad(-1);
     }
-    
-    this.setNextState(this.activeState.idle);
+    this.setNextState(this.eStates.idle);
     this.moveTowards(285, 135);
     //this.moveTowards(this.getXform().getXPos() + 25, this.getXform().getYPos());
 };
 
-FloaterBoss.prototype.spawnMinions = function(xform, minionset, minionSheet){
-    
+FloaterBoss.prototype.spawnMinions = function(xform, minionset, minionSheet) {
     //console.log("Max hp: " + this.maxHP + " Current hp: " + this.mHP);
-      for (var i = 0; i< 1+ ((this.maxHP - this.mHP) / 5); i++) {
+    for (var i = 0; i < 1 + ((this.mMaxHP - this.mHP) / 5); i++) {
        var xRand = Math.random() * 60;
        var yRand = Math.random() * 40;
        var m = new SphereMinion(minionSheet, (xform.getXPos() - 30) + xRand, xform.getYPos() - 20 + yRand);
        minionset.addToSet(m); 
     }
-    this.setNextState(this.activeState.setUpLeftDive);
+    this.setNextState(this.eStates.setUpLeftDive);
 };
 
-FloaterBoss.prototype.moveTowards = function(x, y){
+FloaterBoss.prototype.moveTowards = function(x, y) {
     var xform = this.getXform();
-    if(xform.getXPos() < x){
-        xform.setXPos(xform.getXPos() + this.speed);
+    if (xform.getXPos() < x) {
+        xform.setXPos(xform.getXPos() + this.mSpeed);
     };
-    if(xform.getXPos() > x){
-        xform.setXPos(xform.getXPos() - this.speed);
+    if (xform.getXPos() > x) {
+        xform.setXPos(xform.getXPos() - this.mSpeed);
     };
-    
-    if(xform.getYPos() < y){
-        xform.setYPos(xform.getYPos() + this.speed);
+    if (xform.getYPos() < y) {
+        xform.setYPos(xform.getYPos() + this.mSpeed);
     };
-    if(xform.getYPos() > y){
-        xform.setYPos(xform.getYPos() - this.speed);
+    if (xform.getYPos() > y) {
+        xform.setYPos(xform.getYPos() - this.mSpeed);
     };
-    
 };
 
-FloaterBoss.prototype.bounceBack = function () {
-
+FloaterBoss.prototype.bounceBack = function() {
+    return;
 };

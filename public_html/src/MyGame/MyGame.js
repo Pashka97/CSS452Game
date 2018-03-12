@@ -49,7 +49,7 @@ function MyGame() {
     this.mHobbes = null;
     this.mHobbesHealthBar = null;
     this.mBoss = null;
-    this.mBoss2 = null
+    this.mBoss2 = null;
     this.mBossHealthBar = null;
     this.mBoss2HealthBar = null;
 
