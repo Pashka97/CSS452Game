@@ -5,7 +5,7 @@
 
 /*jslint node: true, vars: true */
 /*global gEngine, Scene, GameObjectset, TextureObject, Camera, vec2,
-  FontRenderable, SpriteRenderable, LineRenderable,
+  FontRenderable, SpriteRenderable, LineRenderable, FloaterBoss
   GameObject */
 /* find out more about jslint: http://www.jslint.com/help.html */
 
@@ -49,7 +49,7 @@ function MyGame() {
     this.mHobbes = null;
     this.mHobbesHealthBar = null;
     this.mBoss = null;
-    this.mBoss2 = null
+    this.mBoss2 = null;
     this.mBossHealthBar = null;
     this.mBoss2HealthBar = null;
 
