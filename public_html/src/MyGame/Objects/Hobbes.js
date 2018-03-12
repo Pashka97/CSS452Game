@@ -83,13 +83,7 @@ function Hobbes(spriteSheet, posX, posY) {
     });
     this.mSpriteState = this.eSpriteStates.standingLeft;
     this.mPrevSpriteState = null;
-    /*
-    this.mPrevLeftWalking = false;
-    this.mPrevRightWalking = false;
-    this.mLeftWalking = false;
-    this.mRightWalking = false;
-    */
-    
+
     // Keep track of squirt gun and balloon timing
     this.mFiredSquirtGun = false;
     this.mFiredBalloon = false;
@@ -269,107 +263,6 @@ Hobbes.prototype._setSprite = function() {
             this.mRen.setSpriteSequence(255, 383, 128, 128, 0, 0);
             break;
     }
-    /*
-    switch (this.mFacing) {
-        case this.eFacing.left:
-            if (this.mOnGround) {
-                if (this.mWalkingState !==  this.eWalkingStates.notWalking) {
-                    if (this.mWalkingState !== this.mPrevWalkingState) {
-                        switch (this.mWalkingState) {
-                            case this.eWalkingStates.walkingLeft:
-                                this.mRen.setSpriteSequence(511, 511, 128, 128, 2, 0);
-                                break;
-                            case this.eWalkingStates.walkingLeftWithSquirtGun:
-                                this.mRen.setSpriteSequence(511, 255, 128, 128, 2, 0);
-                                break;
-                            case this.eWalkingStates.walkingLeftWithBalloon:
-                                this.mRen.setSpriteSequence(511, 0, 128, 128, 2, 0);
-                                break;
-                        }
-                    }
-                }
-                else {
-                    if (this.mFiredSquirtGun) {
-                        // Left standing with squirt gun
-                        this.mRen.setSpriteSequence(511, 511, 128, 128, 0, 0);
-                    }
-                    else if (this.mFiredBalloon) {
-                        // Left standing with balloon
-                        this.mRen.setSpriteSequence(511, 255, 128, 128, 0, 0);
-                    }
-                    else {
-                        // Left standing without weapon
-                        this.mRen.setSpriteSequence(511, 0, 128, 128, 0, 0);
-                    }
-                }
-            }
-            else {
-                if (this.mFiredSquirtGun) {
-                    // Left jumping with squirt gun
-                    this.mRen.setSpriteSequence(255, 511, 128, 128, 0, 0);
-                }
-                else if (this.mFiredBalloon) {
-                    // Left jumping with balloon
-                    this.mRen.setSpriteSequence(255, 255, 128, 128, 0, 0);
-                }
-                else {
-                    // Left jumping without weapon
-                    this.mRen.setSpriteSequence(255, 0, 128, 128, 0, 0);
-                }
-            }
-            break;
-        case this.eFacing.right:
-            if (this.mOnGround) {
-                if (this.mWalkingState !== this.eWalkingStates.notWalking) {
-                    if (this.mWalkingState !== this.mPrevWalkingState) {
-                        if (this.mFiredSquirtGun) {
-                            // Right walking with squirt gun
-                            this.mRen.setSpriteSequence(383, 511, 128, 128, 2, 0);
-                        }
-                        else if (this.mFiredBalloon) {
-                            // Right walking with balloon
-                            this.mRen.setSpriteSequence(383, 255, 128, 128, 2, 0);
-                        }
-                        else {
-                            // Right walking without weapon
-                            this.mRen.setSpriteSequence(383, 0, 128, 128, 2, 0);
-                        }
-                    }
-                }
-                else {
-                    if (this.mFiredSquirtGun) {
-                        // Right standing with squirt gun
-                        this.mRen.setSpriteSequence(383, 511, 128, 128, 0, 0);
-                    }
-                    else if (this.mFiredBalloon) {
-                        // Right standing with balloon
-                        this.mRen.setSpriteSequence(383, 255, 128, 128, 0, 0);
-                    }
-                    else {
-                        // Right standing without weapon
-                        this.mRen.setSpriteSequence(383, 0, 128, 128, 0, 0);
-                    }
-                }
-            }
-            else {
-                if (this.mFiredSquirtGun) {
-                    // Right jumping with squirt gun
-                    this.mRen.setSpriteSequence(255, 639, 128, 128, 0, 0);
-                }
-                else if (this.mFiredBalloon) {
-                    // Right jumping with balloon
-                    this.mRen.setSpriteSequence(255, 383, 128, 128, 0, 0);
-                }
-                else {
-                    // Right jumping without weapon
-                    this.mRen.setSpriteSequence(255, 127, 128, 128, 0, 0);
-                }
-            }
-            break;
-        default:
-            return;
-    }
-    */
 };
 
 Hobbes.prototype.registerDamage = function () {
@@ -387,10 +280,6 @@ Hobbes.prototype.update = function(
     // Determine if Hobbes is walking
     var walking = false;
     // Left and right arrow keys for movement
-    /*
-    this.mPrevLeftWalking = this.mLeftWalking;
-    this.mPrevRightWalking = this.mRightWalking;
-    */
     var delta = 0.5;
     var xform = this.getXform();
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.A)) {
