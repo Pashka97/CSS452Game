@@ -5,7 +5,7 @@
 function FloaterBoss(spriteSheet, posX, posY, initialState) {
     this.ogX = posX;
     this.ogY = posY;
-    Boss.call(this, spriteSheet, posX, posY, 150);
+    Boss.call(this, spriteSheet, posX, posY, 200);
     this.eFacing = {
         idle:0,
         left:1,
