@@ -13,7 +13,7 @@ function Hobbes(spriteSheet, posX, posY) {
     this.mRen = new SpriteAnimateRenderable(spriteSheet);
     this.mRen.setColor([1, 1, 1, 0]);
     this.mRen.getXform().setPosition(posX, posY);
-    var width = 10;
+    var width = 20;
     var height = 20;
     this.mRen.getXform().setSize(width, height);
     this.mRen.setSpriteSequence(511, 0, 128, 128, 0, 0);
@@ -221,10 +221,10 @@ Hobbes.prototype._setSprite = function() {
             this.mRen.setSpriteSequence(511, 0, 128, 128, 2, 0);
             break;
         case this.eSpriteStates.walkingLeftWithSquirtGun:
-            this.mRen.setSpriteSequence(511, 255, 128, 128, 2, 0);
+            this.mRen.setSpriteSequence(511, 511, 128, 128, 2, 0);
             break;
         case this.eSpriteStates.walkingLeftWithBalloon:
-            this.mRen.setSpriteSequence(511, 0, 128, 128, 2, 0);
+            this.mRen.setSpriteSequence(511, 255, 128, 128, 2, 0);
             break;
         case this.eSpriteStates.jumpingLeft:
             this.mRen.setSpriteSequence(255, 0, 128, 128, 0, 0);
@@ -338,7 +338,7 @@ Hobbes.prototype.update = function(
             this.mFiredBalloon = false;
             this.mFiredWeaponTime = Date.now();
             if (this.mFacingState === this.eFacingStates.left) {
-                var xPos = this.getXform().getPosition()[0] - 5;
+                var xPos = this.getXform().getPosition()[0] - 10;
                 var yPos = this.getXform().getPosition()[1] +
                     (this.getXform().getHeight() / 4);
                 var shot = new SquirtGunShot(
@@ -346,7 +346,7 @@ Hobbes.prototype.update = function(
                 squirtGunShots.addToSet(shot);
             }
             else { // facing right
-                var xPos = this.getXform().getPosition()[0] + 5;
+                var xPos = this.getXform().getPosition()[0] + 10;
                 var yPos = this.getXform().getPosition()[1] +
                     (this.getXform().getHeight() / 4);
                 var shot = new SquirtGunShot(
@@ -363,7 +363,7 @@ Hobbes.prototype.update = function(
             this.mFiredSquirtGun = false;
             this.mFiredWeaponTime = Date.now();
             if (this.mFacingState === this.eFacingStates.left) {
-                var xPos = this.getXform().getPosition()[0] - 5;
+                var xPos = this.getXform().getPosition()[0] - 10;
                 var yPos = this.getXform().getPosition()[1] +
                            (this.getXform().getHeight() / 4);
                 var shot = new WaterBalloon(
@@ -371,7 +371,7 @@ Hobbes.prototype.update = function(
                 squirtGunShots.addToSet(shot);
             }
             else { //facing right
-                var xPos = this.getXform().getPosition()[0] + 5;
+                var xPos = this.getXform().getPosition()[0] + 10;
                 var yPos = this.getXform().getPosition()[1] +
                            (this.getXform().getHeight() / 4);
                 var shot = new WaterBalloon(
