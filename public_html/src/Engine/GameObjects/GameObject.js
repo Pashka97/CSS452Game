@@ -92,19 +92,6 @@ GameObject.prototype.update = function () {
             this.mRigidBodies[i].update();
         }
     }
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.T)) {
-        this.toggleDrawRenderable();
-    }
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.B)) {
-        for (var i = 0; i < this.mRigidBodies.length; ++i) {
-            if (this.mRigidBodies[i] !== null) {
-                this.mRigidBodies[i].togleDrawBound();
-            }
-        }
-    }
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.R)) {
-        this.toggleDrawRigidShape();
-    }
 };
 
 GameObject.prototype.draw = function (aCamera) {
