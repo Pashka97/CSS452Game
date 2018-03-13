@@ -32,6 +32,7 @@ function Level2()
     this.kSquirtGunShotSprite = "assets/squirtgunshot.png";
     this.kWaterBalloonSprite = "assets/Balloon.png";
     this.kProjectileTexture = "assets/particle.png";
+    this.mParticleSet = null;
 
     // square box sprite sheet
     this.kSquareBossSpriteSheet = "assets/squareboss_sprites.png";
@@ -87,6 +88,7 @@ Level2.prototype.unloadScene = function()
 
 Level2.prototype.initialize = function()
 {
+     this.mParticleSet =  new GameObjectSet();
     gEngine.AudioClips.playBackgroundAudio(this.kBGM);
     // define all of the level specifics, like all of the objects
     // and positions
@@ -157,7 +159,7 @@ Level2.prototype.draw = function()
 Level2.prototype.drawAll = function(camera) {
     // draw background first
     this.mLevel.mBackgroundRenderable.draw(camera);
-
+    this.mParticleSet.draw(camera);
     // draw all of the platforms
     // for(var i = 0; i < this.mLevel.mPlatforms.size(); i++)
     // {
@@ -219,6 +221,7 @@ Level2.prototype.update = function()
             var sq = this.mMinions.getObjectAt(j);
             if(shot.pixelTouches(sq, []))
             {
+                this.mSquirtGunShots.getObjectAt(i).processHit(this.mParticleSet,this.mMinions);
                 // hit the square
                 sq.hit();
                 // remove the shot
@@ -253,6 +256,7 @@ Level2.prototype.update = function()
             // check for a hit and remove the squirt gun shot if it was hit
             if(shot.pixelTouches(platform, []))
             {
+                this.mSquirtGunShots.getObjectAt(i).processHit(this.mParticleSet,this.mMinions);
                 this.mSquirtGunShots.removeFromSet(shot);
             }
         }
@@ -291,5 +295,6 @@ Level2.prototype.update = function()
 
     // Health bars
     this.mPlayerHealthBar.update(this.mainCamera);
+    this.mParticleSet.update(this.mainCamera);
 
 };
