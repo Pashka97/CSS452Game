@@ -14,7 +14,6 @@
 function MyGame() {
     // Assets
     this.kProjectileTexture = "assets/particle.png";
-    this.kExplosion = "assets/explosion.png";
     this.kSphereMinion = "assets/sphere_enemy.png";
     this.kHobbesSpriteSheet = "assets/hobbes.png";
     this.kPlatformTexture = "assets/platform.png";
@@ -64,7 +63,6 @@ function MyGame() {
 gEngine.Core.inheritPrototype(MyGame, Scene);
 
 MyGame.prototype.loadScene = function() {
-    gEngine.Textures.loadTexture(this.kExplosion);
     gEngine.Textures.loadTexture(this.kProjectileTexture);
     gEngine.Textures.loadTexture(this.kSphereMinion);
     gEngine.Textures.loadTexture(this.kHobbesSpriteSheet);
@@ -85,7 +83,6 @@ MyGame.prototype.loadScene = function() {
 };
 
 MyGame.prototype.unloadScene = function() {
-    gEngine.Textures.unloadTexture(this.kExplosion);
     gEngine.Textures.unloadTexture(this.kProjectileTexture);
     gEngine.Textures.unloadTexture(this.kSphereMinion);
     gEngine.Textures.unloadTexture(this.kHobbesSpriteSheet);
@@ -272,11 +269,9 @@ MyGame.prototype.update = function () {
                     // if dead, then remove it from the set
                     if(minion.isDead()) {
                         this.bossCameraShake(minion);
-                        this.requiredTimer = 0;
-                        var explosion = new Explosion(this.kExplosion, minion.getXform().getXPos(), minion.getXform().getYPos());
+                        this.requiredTimer = 0;                     
                         this.mMinions.removeFromSet(minion);
                         
-                        this.mMinions.addToSet(explosion);
                     }
                 }
                 else if(minion instanceof SphereMinion)
@@ -284,12 +279,6 @@ MyGame.prototype.update = function () {
                     this.mMinions.removeFromSet(minion);
                 }
                 this.mSquirtGunShots.removeFromSet(shot);
-            }
-            if(minion instanceof Explosion) {
-                if(minion.isDead()) {
-                    console.log("in explosion branch");
-                    this.mMinions.removeFromSet(minion);
-                }
             }
         }
         // or if they collide with the bounding boxes of the world
@@ -304,26 +293,10 @@ MyGame.prototype.update = function () {
             }
         }
     }
-
-    
-    for (var j = 0; j < this.mMinions.size(); ++j) {
-         var minion = this.mMinions.getObjectAt(j);
-         if(minion instanceof Explosion) {
-            if(minion.isDead()) {
-                console.log("in explosion branch");
-                this.mMinions.removeFromSet(minion);
-            }
-        }
-    }
-    
-
-
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Y))
     {
         this.mMinions = new GameObjectSet();
     }
-
-
     // Process
     if(this.mMinions.size() <= 0) {
         //this.mNextScene = new WinScreen();
