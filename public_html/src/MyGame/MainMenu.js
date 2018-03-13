@@ -11,11 +11,11 @@
 function MainMenu()
 {
     // Assets
+    this.kImage = "assets/main_menu.png"
     this.kBGM = "assets/sounds/kelvin_373_title.ogg";
     
-    this.camera = null;
-    this.placeholderText = null;
-    this.placeholderText2 = null;
+    this.mCamera = null;
+    this.mRen = null;
 };
 
 gEngine.Core.inheritPrototype(MainMenu, Scene);
@@ -25,31 +25,28 @@ MainMenu.prototype.initialize = function()
     // BGM
     gEngine.AudioClips.playBackgroundAudio(this.kBGM);
     
-    this.camera = new Camera(
-        vec2.fromValues(50, 50),
-        100,
+    this.mCamera = new Camera(
+        vec2.fromValues(500, 350),
+        1000,
         [0, 0, 1000, 700],
         0 // new bound value
     );
-
-    this.placeholderText = new FontRenderable("KELVIN 373 main menu");
-    this.placeholderText.setColor([0,0,0,1]);
-    this.placeholderText.getXform().setPosition(5, 80);
-    this.placeholderText.setTextHeight(5);
-
-    this.placeholderText2 = new FontRenderable("Press ENTER or SPACE");
-    this.placeholderText2.setColor([1,0,0,1]);
-    this.placeholderText2.getXform().setPosition(5, 20);
-    this.placeholderText2.setTextHeight(2.0);
-
-    this.camera.setBackgroundColor([80 / 255, 114 / 255, 201 / 255, 1.0]);
+    
+    this.mRen = new TextureRenderable(this.kImage);
+    this.mRen.setColor([1, 1, 1, 0]);
+    this.mRen.getXform().setPosition(500, 350);
+    this.mRen.getXform().setSize(1000, 700);
+    
+    gEngine.DefaultResources.setGlobalAmbientIntensity(3);
 };
 
 MainMenu.prototype.loadScene = function() {
+    gEngine.Textures.loadTexture(this.kImage);
     gEngine.AudioClips.loadAudio(this.kBGM);
 };
 
 MainMenu.prototype.unloadScene = function() {
+gEngine.Textures.unloadTexture(this.kImage);
     gEngine.AudioClips.stopBackgroundAudio();
     gEngine.AudioClips.unloadAudio(this.kBGM);
     var mainGame = new MyGame();
@@ -65,14 +62,8 @@ MainMenu.prototype.goToMainGame = function()
 
 MainMenu.prototype.update = function()
 {
-    // check for the Enter or Space keys to start the game
+    // Check for the Space key to start the game
     if(gEngine.Input.isKeyClicked(gEngine.Input.keys.Space))
-    {
-        gEngine.GameLoop.stop();
-    }
-    
-    // Enter Doesnt Work?
-    if(gEngine.Input.isKeyClicked(gEngine.Input.keys.Enter))
     {
         gEngine.GameLoop.stop();
     }
@@ -80,7 +71,6 @@ MainMenu.prototype.update = function()
 
 MainMenu.prototype.draw = function()
 {
-  this.camera.setupViewProjection();
-  this.placeholderText.draw(this.camera);
-  this.placeholderText2.draw(this.camera);
+  this.mCamera.setupViewProjection();
+  this.mRen.draw(this.mCamera);
 };

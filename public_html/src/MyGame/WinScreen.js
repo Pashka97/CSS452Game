@@ -5,23 +5,22 @@
  */
 function WinScreen() {
     // Assets
-    this.kBackground = "assets/Background.png";
+    this.kImage = "assets/win_screen.png";
     this.kBGM = "assets/sounds/kelvin_373_title.ogg";
     
     this.mCamera = null;
-    this.mBG = null;
-    this.messageArray = [];
+    this.mRen = null;
 }
 
 gEngine.Core.inheritPrototype(WinScreen, Scene);
 
 WinScreen.prototype.loadScene = function() {
-    gEngine.Textures.loadTexture(this.kBackground);
+    gEngine.Textures.loadTexture(this.kImage);
     gEngine.AudioClips.loadAudio(this.kBGM);
 };
 
 WinScreen.prototype.unloadScene = function () {
-    gEngine.Textures.unloadTexture(this.kBackground);
+    gEngine.Textures.unloadTexture(this.kImage);
     gEngine.AudioClips.stopBackgroundAudio();
     gEngine.AudioClips.unloadAudio(this.kBGM);
     
@@ -34,48 +33,22 @@ WinScreen.prototype.initialize = function () {
     gEngine.AudioClips.playBackgroundAudio(this.kBGM);
     // camera
     this.mCamera = new Camera(
-        vec2.fromValues(50, 40), // position of the camera
-        100,                     // width of camera
-        [0, 0, 1000, 700]         // viewport (orgX, orgY, width, height
+        vec2.fromValues(500, 350),
+        1000,
+        [0, 0, 1000, 700]
     );
-    this.mCamera.setBackgroundColor([0, 0, 1, 1]);
     
-    // Background
- 
-    
-    this.mMsg = new FontRenderable("");
-    this.mMsg.setColor([1, 1, 1, 1]);
-    this.mMsg.getXform().setPosition(30, 50);
-    this.mMsg.setTextHeight(6);
-    
-    var msg = new FontRenderable("A winner is you!");
-    msg.setColor([1, 1, 1, 1]);
-    msg.getXform().setPosition(25, 50);
-    msg.setTextHeight(6);
-    
-    this.messageArray.push(msg);
-    
-    var msg3 = new FontRenderable("Press R to restart");
-    msg3.setColor([1, 1, 1, 1]);
-    msg3.getXform().setPosition(20,30);
-    msg3.setTextHeight(6);
-
-    this.messageArray.push(msg3);
-    
-    //this.mMsg.setText(txt);
+    this.mRen = new TextureRenderable(this.kImage);
+    this.mRen.setColor([1, 1, 1, 0]);
+    this.mRen.getXform().setPosition(500, 350);
+    this.mRen.getXform().setSize(1000, 700);
     
     gEngine.DefaultResources.setGlobalAmbientIntensity(3);
 }; 
         
 WinScreen.prototype.draw = function () {
-    gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
-
     this.mCamera.setupViewProjection();
-    
-    //Draw the game over message
-    for(var i = 0; i < this.messageArray.length; i++){
-        this.messageArray[i].draw(this.mCamera);
-    }
+    this.mRen.draw(this.mCamera);
 };
 
 WinScreen.prototype.update = function () {

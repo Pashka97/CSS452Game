@@ -40,7 +40,7 @@ function Hobbes(spriteSheet, posX, posY) {
         height
     );
     // Bounding box for floor collision
-    var floorBBoxWidth = width - 7;
+    var floorBBoxWidth = width - 14;
     var floorBBoxHeight = .15;
     this.mFloorBBox = new BoundingBox(
         vec2.fromValues(posX, posY - (height / 2)),
