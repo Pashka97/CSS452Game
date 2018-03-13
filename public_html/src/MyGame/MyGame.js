@@ -229,7 +229,7 @@ MyGame.prototype.update = function () {
     }
     
     this.mCamera.update();  // to ensure proper interpolated movement effects
-    this.mLevel.update();
+    this.mLevel.update(this.mHobbes.mRen);
     
 
     
